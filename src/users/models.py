@@ -30,7 +30,7 @@ class User(AbstractUser):
         unique=True,
     )
     role = models.CharField(
-        max_length=20, choices=ROLES, verbose_name="Роль", default=USER
+        verbose_name="Роль", max_length=20, choices=ROLES, default=USER
     )
 
     class Meta:
