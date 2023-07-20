@@ -1,41 +1,41 @@
 from django.db import models
 
 
-class Type(models.Model):
+class Category(models.Model):
     name = models.CharField(
-        verbose_name="Название типа техники",
+        verbose_name="Название категории",
         unique=True,
         max_length=100,
         blank=False,
         null=False,
     )
     description = models.TextField(
-        verbose_name="Описание типа техники",
+        verbose_name="Описание категории",
         blank=False,
         null=False,
     )
     work_type = models.CharField(verbose_name="Предназначение", max_length=150)
 
     class Meta:
-        verbose_name = "Тип техники"
-        verbose_name_plural = "Типы техник"
+        verbose_name = "Категория"
+        verbose_name_plural = "Категории"
 
     def __str__(self):
         return self.name
 
 
-class Machinery(models.Model):
+class MachineryInfo(models.Model):
     name = models.CharField(
         verbose_name="Название техники",
         max_length=100,
         blank=False,
         null=False,
     )
-    type = models.ForeignKey(
-        Type,
-        on_delete=models.CASCADE,
-        related_name="machineries",
-        verbose_name="Тип техники",
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.PROTECT,
+        related_name="machineries_info",
+        verbose_name="Категория",
     )
     description = models.TextField(
         verbose_name="Описание техники",
@@ -61,11 +61,11 @@ class Machinery(models.Model):
         return self.name
 
 
-class MachineryList(models.Model):
+class Machinery(models.Model):
     machinery = models.ForeignKey(
-        Machinery,
-        on_delete=models.CASCADE,
-        related_name="machineries_list",
+        MachineryInfo,
+        on_delete=models.PROTECT,
+        related_name="machineries",
         verbose_name="Техника",
     )
     year_of_manufacture = models.PositiveSmallIntegerField(
