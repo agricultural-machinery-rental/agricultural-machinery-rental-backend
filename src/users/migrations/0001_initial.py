@@ -113,7 +113,6 @@ class Migration(migrations.Migration):
                     models.IntegerField(
                         choices=[(1, "Admin"), (2, "Moderator"), (3, "User")],
                         default=3,
-                        max_length=20,
                         verbose_name="Роль",
                     ),
                 ),
