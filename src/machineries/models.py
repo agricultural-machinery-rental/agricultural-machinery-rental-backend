@@ -1,27 +1,5 @@
 from django.db import models
-
-
-class Category(models.Model):
-    name = models.CharField(
-        verbose_name="Название категории",
-        unique=True,
-        max_length=100,
-        blank=False,
-        null=False,
-    )
-    description = models.TextField(
-        verbose_name="Описание категории",
-        blank=False,
-        null=False,
-    )
-    work_type = models.CharField(verbose_name="Предназначение", max_length=150)
-
-    class Meta:
-        verbose_name = "Категория"
-        verbose_name_plural = "Категории"
-
-    def __str__(self):
-        return self.name
+from core.choices_classes import Category
 
 
 class MachineryInfo(models.Model):
@@ -31,11 +9,12 @@ class MachineryInfo(models.Model):
         blank=False,
         null=False,
     )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.PROTECT,
-        related_name="machineries_info",
-        verbose_name="Категория",
+    category = models.IntegerField(
+        verbose_name="Категория техники",
+        choices=Category.choices,
+        blank=False,
+        null=False,
+
     )
     description = models.TextField(
         verbose_name="Описание техники",
