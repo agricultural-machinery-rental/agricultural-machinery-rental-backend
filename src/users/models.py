@@ -1,15 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-# Перечень ролей, корректируется при необходимости
-ADMIN = "admin"
-MODERATOR = "moderator"
-USER = "user"
-ROLES = [
-    (ADMIN, "Админ"),
-    (MODERATOR, "Модератор"),
-    (USER, "Пользователь"),
-]
+from core.choices_classes import Role
 
 
 class User(AbstractUser):
@@ -29,8 +21,11 @@ class User(AbstractUser):
         null=False,
         unique=True,
     )
-    role = models.CharField(
-        verbose_name="Роль", max_length=20, choices=ROLES, default=USER
+    role = models.IntegerField(
+        verbose_name="Роль",
+        max_length=20,
+        choices=Role.choices,
+        default=Role.USER,
     )
 
     class Meta:
@@ -39,8 +34,8 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == ADMIN
+        return self.role == Role.ADMIN
 
     @property
     def is_moderator(self):
-        return self.role == MODERATOR
+        return self.role == Role.MODERATOR
