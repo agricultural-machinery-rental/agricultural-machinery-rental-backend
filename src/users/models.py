@@ -23,7 +23,6 @@ class User(AbstractUser):
     )
     role = models.IntegerField(
         verbose_name="Роль",
-        max_length=20,
         choices=Role.choices,
         default=Role.USER,
     )
