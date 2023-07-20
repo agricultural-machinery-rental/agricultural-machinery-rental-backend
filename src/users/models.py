@@ -17,7 +17,7 @@ class User(AbstractUser):
     Переопределенный пользователь
     """
 
-    first_name = models.CharField(
+    full_name = models.CharField(
         verbose_name="Фамилия и имя",
         max_length=150,
         blank=False,
