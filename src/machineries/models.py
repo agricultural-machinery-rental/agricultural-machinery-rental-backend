@@ -15,7 +15,6 @@ class MachineryInfo(models.Model):
         choices=Category.choices,
         blank=False,
         null=False,
-
     )
     description = models.TextField(
         verbose_name="Описание техники",
