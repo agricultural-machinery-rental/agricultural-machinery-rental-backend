@@ -1,4 +1,5 @@
 from django.db import models
+
 from core.choices_classes import Category
 
 
