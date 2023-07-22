@@ -1,0 +1,117 @@
+openapi: 3.0.3
+info:
+  title: Agricultural Machinery Rental (AMR)
+  version: "1.0"
+  description: |
+    Open API сервиса **Аренда сельскохозяйственной техники**
+
+servers:
+  - url: /api/v1/
+
+tags:
+  - name: AUTH
+    description: Регистрация пользователей и выдача токенов
+
+paths:
+  /auth/signup/:
+    post:
+      tags:
+        - AUTH
+      summary: Регистрация нового пользователя
+      description: |
+        Права доступа: **Доступно без токена.**
+
+        Поля `username` и `email` должны быть уникальными.
+        
+        - Поле `username`: от 5 до 10 буквенно-цифровых символов, разрешены 
+        символы подчеркивания и точка.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - username
+                - full_name
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                full_name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+            example: { "username": "ipoop", "full_name": "Пупкин Иван",
+              "email":
+                "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+      responses:
+        201:
+          description: Пользователь зарегистрирован
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Ошибки валидации. Отсутствует обязательное поле или оно некорректно.
+
+  /auth/token/:
+    post:
+      tags:
+        - AUTH
+      summary: Получение токена
+      description: |
+        Права доступа: **Доступно без токена.**
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example: { "email": "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                properties:
+                  token:
+                    type: string
+                example: { "token": "Token f77c6070b0f4c9a04c13ec32fe8908373577e008" }
+          description: Удачное выполнение запроса
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Отсутствует обязательное поле или оно некорректно
+        404:
+          description: Пользователь не найден
+
+components:
+  schemas:
+    User:
+      title: Пользователь
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+
+
+    ValidationError:
+      title: Ошибка валидации
+      type: object
+      properties:
+        field_name:
+          type: array
+          items:
+            type: string
