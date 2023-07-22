@@ -17,3 +17,13 @@ class Category(models.IntegerChoices):
     TRAILER = 7  # Прицеп
     DUMP_TRUCK = 8  # Самосвал
     LIFT_TRUCK = 9  # Погрузчик
+
+
+class ReservationStatus(models.IntegerChoices):
+    STATUS_VALID = 0
+    STATUS_CANCELLED = 1
+
+
+class OrderStatus(models.IntegerChoices):
+    AT_WORK = 0
+    FINISHED = 1

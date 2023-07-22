@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
     "machineries.apps.MachineriesConfig",
+    "orders.apps.OrdersConfig",
 ]
 
 MIDDLEWARE = [
