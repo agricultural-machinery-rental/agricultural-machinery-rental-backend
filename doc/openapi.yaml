@@ -1,23 +1,24 @@
 openapi: 3.0.3
 info:
-  title: API Технопарк
+  title: API Агропарк
   version: "1.0"
   description: |
-    Open API сервиса **Агропарк** Аренда сельскохозяйственной техники (Agricultural Machinery Rental - AMR)
+    Open API сервиса **Агропарк** - Аренда сельскохозяйственной техники 
+    [Agricultural Machinery Rental - AMR]
 
 servers:
   - url: /api/v1/
 
 tags:
   - name: AUTH
-    description: Регистрация пользователей и выдача токенов
+    description: Регистрация пользователей и выдача токенов.
 
 paths:
   /auth/signup/:
     post:
       tags:
         - AUTH
-      summary: Регистрация нового пользователя
+      summary: Регистрация нового пользователя.
       description: |
         Права доступа: **Доступно без токена.**
 
@@ -25,10 +26,11 @@ paths:
         
         - Поле `username`: от 5 до 10 буквенно-цифровых символов, разрешены 
         символы подчеркивания и точка. Буквы только латинского алфавита.
+        - Поле `full_name`: от 2 символов. Не разрешаны спецсимволы и цифры.
         - Поле `password`: от 6 до 25 символов. Специальные требования (одна 
-        заглавная, одна строчная буквы, одна цифра)
+        заглавная, одна строчная буквы, одна цифра).
         
-        Все поля обязательные
+        Все поля обязательные.
       requestBody:
         content:
           application/json:
@@ -41,7 +43,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-          description: Пользователь зарегистрирован
+          description: Пользователь зарегистрирован.
         400:
           content:
             application/json:
@@ -53,7 +55,7 @@ paths:
     post:
       tags:
         - AUTH
-      summary: Получение токена
+      summary: Получение токена.
       description: |
         Права доступа: **Доступно без токена.**
       requestBody:
@@ -67,10 +69,7 @@ paths:
           content:
             application/json:
               schema:
-                properties:
-                  token:
-                    type: string
-                example: { "token": "Token f77c6070b0f4c9a04c13ec32fe8908373577e008" }
+                $ref: "#/components/schemas/Token"
           description: Удачное выполнение запроса
         400:
           content:
@@ -79,6 +78,10 @@ paths:
                 $ref: "#/components/schemas/ValidationError"
           description: Отсутствует обязательное поле или оно некорректно
         404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
           description: Пользователь не найден
 
 components:
@@ -99,6 +102,7 @@ components:
           description: "login пользователя"
         full_name:
           type: string
+          minLength: 2
           description: "Фамилия и имя пользователя"
         email:
           format: email
@@ -119,17 +123,32 @@ components:
       properties:
         username:
           type: string
+          description: "login пользователя"
       example: { "username": "ipoop"}
 
     TokenUser:
       title: Запрос токена
       type: object
+      required:
+        - username
+        - password
       properties:
         username:
           type: string
+          description: "login пользователя"
         password:
           type: string
+          description: "Пароль пользователя"
       example: { "username": "ipoop", "password": "sUPPerPA$$" }
+
+    Token:
+      title: Токен
+      type: object
+      properties:
+        token:
+          type: string
+          description: "Токен"
+      example: { "token": "Token f77c6070b0f4c9a04c13ec32fe8908373577e008" }
 
     ValidationError:
       title: Ошибка валидации
@@ -139,3 +158,13 @@ components:
           type: array
           items:
             type: string
+
+    NotFound:
+      description: Объект не найден
+      type: object
+      properties:
+        detail:
+          description: 'Описание ошибки'
+          example: "Страница не найдена."
+          type: string
+#      example: {"username": "not found"}
