@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -26,6 +27,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
     "machineries.apps.MachineriesConfig",
+    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -58,8 +60,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-# Database
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -73,7 +73,6 @@ DATABASES = {
 
 AUTH_USER_MODEL = "users.User"
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -89,8 +88,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
 LANGUAGE_CODE = "ru-RU"
 
 TIME_ZONE = "UTC"
@@ -99,9 +96,20 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
