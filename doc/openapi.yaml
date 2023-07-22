@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
-  title: Agricultural Machinery Rental (AMR)
+  title: API Технопарк
   version: "1.0"
   description: |
-    Open API сервиса **Аренда сельскохозяйственной техники**
+    Open API сервиса **Агропарк** Аренда сельскохозяйственной техники (Agricultural Machinery Rental - AMR)
 
 servers:
   - url: /api/v1/
