@@ -24,30 +24,23 @@ paths:
         Поля `username` и `email` должны быть уникальными.
         
         - Поле `username`: от 5 до 10 буквенно-цифровых символов, разрешены 
-        символы подчеркивания и точка.
+        символы подчеркивания и точка. Буквы только латинского алфавита.
+        - Поле `password`: от 6 до 25 символов. Специальные требования (одна 
+        заглавная, одна строчная буквы, одна цифра)
+        
+        Все поля обязательные
       requestBody:
         content:
           application/json:
             schema:
-              required:
-                - username
-                - full_name
-                - email
-                - password
-              properties:
-                username:
-                  type: string
-                full_name:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
-            example: { "username": "ipoop", "full_name": "Пупкин Иван",
-              "email":
-                "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+              $ref: "#/components/schemas/NewUser"
+
       responses:
         201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
           description: Пользователь зарегистрирован
         400:
           content:
@@ -67,15 +60,8 @@ paths:
         content:
           application/json:
             schema:
-              required:
-                - email
-                - password
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-              example: { "email": "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+              $ref: "#/components/schemas/TokenUser"
+
       responses:
         200:
           content:
@@ -97,15 +83,53 @@ paths:
 
 components:
   schemas:
+    NewUser:
+      title: Регистрируемый пользователь
+      type: object
+      required:
+        - username
+        - full_name
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 5
+          maxLength: 10
+          description: "login пользователя"
+        full_name:
+          type: string
+          description: "Фамилия и имя пользователя"
+        email:
+          format: email
+          type: string
+          description: "Адрес электронной почты"
+        password:
+          type: string
+          minLength: 6
+          maxLength: 25
+          description: "Пароль пользователя"
+      example: { "username": "ipoop", "full_name": "Пупкин Иван",
+          "email":
+            "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+
     User:
       title: Пользователь
       type: object
       properties:
-        id:
-          type: integer
         username:
           type: string
+      example: { "username": "ipoop"}
 
+    TokenUser:
+      title: Запрос токена
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      example: { "username": "ipoop", "password": "sUPPerPA$$" }
 
     ValidationError:
       title: Ошибка валидации
