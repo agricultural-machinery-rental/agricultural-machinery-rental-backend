@@ -62,8 +62,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/TokenUser"
+              $ref: "#/components/schemas/getTokenUser"
 
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenRefresh"
+          description: Удачное выполнение запроса
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Отсутствует обязательное поле или оно некорректно
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+          description: Пользователь не найден
+
+  /auth/token/refresh/:
+    post:
+      tags:
+        - AUTH
+      summary: Обновление токена.
+      description: |
+        Права доступа: **Доступно без токена.**
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/getRefreshToken"
       responses:
         200:
           content:
@@ -114,8 +146,8 @@ components:
           maxLength: 25
           description: "Пароль пользователя"
       example: { "username": "ipoop", "full_name": "Пупкин Иван",
-          "email":
-            "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+        "email":
+          "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
 
     User:
       title: Пользователь
@@ -124,9 +156,9 @@ components:
         username:
           type: string
           description: "login пользователя"
-      example: { "username": "ipoop"}
+      example: { "username": "ipoop" }
 
-    TokenUser:
+    getTokenUser:
       title: Запрос токена
       type: object
       required:
@@ -141,14 +173,37 @@ components:
           description: "Пароль пользователя"
       example: { "username": "ipoop", "password": "sUPPerPA$$" }
 
+    getRefreshToken:
+      title: Запрос на обновление токена
+      type: object
+      required:
+        - refresh
+      properties:
+        refresh:
+          type: string
+          description: "полученный раннее refresh пользователя"
+      example: { "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
+
     Token:
       title: Токен
       type: object
       properties:
-        token:
+        access:
           type: string
           description: "Токен"
-      example: { "token": "Token f77c6070b0f4c9a04c13ec32fe8908373577e008" }
+      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg" }
+
+    TokenRefresh:
+      title: Токен и обновление
+      type: object
+      properties:
+        access:
+          type: string
+          description: "Токен"
+        refresh:
+          type: string
+          description: "Обновление токена"
+      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg", "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
 
     ValidationError:
       title: Ошибка валидации
@@ -167,4 +222,3 @@ components:
           description: 'Описание ошибки'
           example: "Страница не найдена."
           type: string
-#      example: {"username": "not found"}
