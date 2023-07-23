@@ -1,4 +1,5 @@
 from django.db import models
+
 from core.choices_classes import Category
 
 
@@ -14,7 +15,6 @@ class MachineryInfo(models.Model):
         choices=Category.choices,
         blank=False,
         null=False,
-
     )
     description = models.TextField(
         verbose_name="Описание техники",
