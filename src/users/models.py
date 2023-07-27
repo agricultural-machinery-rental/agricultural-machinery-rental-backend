@@ -8,6 +8,7 @@ class User(AbstractUser):
     """
     Переопределенный пользователь
     """
+
     username = None
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
@@ -45,7 +46,7 @@ class User(AbstractUser):
         default=Role.USER,
     )
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -53,8 +54,10 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name[0].upper()}." \
-               f"{self.patronymic[0] + '.' if self.patronymic else ''} "
+        return (
+            f"{self.last_name} {self.first_name[0].upper()}."
+            f"{self.patronymic[0] + '.' if self.patronymic else ''} "
+        )
 
     @property
     def is_admin(self):
