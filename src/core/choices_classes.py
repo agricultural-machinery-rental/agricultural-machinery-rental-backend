@@ -8,12 +8,11 @@ class Role(models.IntegerChoices):
 
 
 class Category(models.IntegerChoices):
-    TRACTOR = 1  # Трактор
-    COMBINE_HARVESTER = 2  # Комбайн
+    TRACTORS = 1  # Трактора
+    COMBINES = 2  # Комбайны
     EQUIPMENT_SOWING = 3  # Посевная техника
-    PLOW = 4  # Плуг
-    MOWING_GRASS = 5  # Покос травы
-    SPRAYER = 6  # Опрыскиватель
-    TRAILER = 7  # Прицеп
-    DUMP_TRUCK = 8  # Самосвал
-    LIFT_TRUCK = 9  # Погрузчик
+    MOTORIZED_TRACTORS = 4  # Мототракторы
+    TRAILERS = 5  # Прицепы
+    PLOWS = 6  # Плуги
+    LIFT_TRUCKS = 7  # Погрузчики
+    ATTACHMENTS = 8  # Навесное оборудование
