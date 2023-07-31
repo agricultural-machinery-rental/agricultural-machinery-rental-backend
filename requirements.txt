@@ -3,4 +3,5 @@ djangorestframework~=3.14.0
 python-dotenv~=1.0.0
 black~=23.7.0
 psycopg2~=2.9.6
-djangorestframework-simplejwt
+djangorestframework-simplejwt~=5.2.2
+django-phonenumber-field[phonenumberslite]~=7.1.0

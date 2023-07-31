@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "machineries.apps.MachineriesConfig",
     "rest_framework_simplejwt",
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
