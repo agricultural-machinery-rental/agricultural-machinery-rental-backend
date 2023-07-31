@@ -1,5 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 
+from core.choices_classes import Role
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):

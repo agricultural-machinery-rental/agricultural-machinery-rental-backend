@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+
 from core.choices_classes import Role
 from users.managers import UserManager
 
@@ -9,6 +10,7 @@ class User(AbstractUser):
     """
     Переопределенный пользователь
     """
+
     username = None
     email = models.EmailField(
         verbose_name="Адрес электронной почты",
