@@ -3,4 +3,5 @@ djangorestframework~=3.14.0
 python-dotenv~=1.0.0
 black~=23.7.0
 psycopg2~=2.9.6
+pre-commit~=3.3.3
 djangorestframework-simplejwt
