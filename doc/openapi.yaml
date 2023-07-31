@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: API Агропарк
+  version: "1.0"
+  description: |
+    Open API сервиса **Агропарк** - Аренда сельскохозяйственной техники 
+    [Agricultural Machinery Rental - AMR]
+
+servers:
+  - url: /api/v1/
+
+tags:
+  - name: AUTH
+    description: Регистрация пользователей и выдача токенов.
+
+paths:
+  /auth/signup/:
+    post:
+      tags:
+        - AUTH
+      summary: Регистрация нового пользователя.
+      description: |
+        Права доступа: **Доступно без токена.**
+
+        Поля `username` и `email` должны быть уникальными.
+        
+        - Поле `username`: от 5 до 10 буквенно-цифровых символов, разрешены 
+        символы подчеркивания и точка. Буквы только латинского алфавита.
+        - Поле `full_name`: от 2 символов. Не разрешаны спецсимволы и цифры.
+        - Поле `password`: от 6 до 25 символов. Специальные требования (одна 
+        заглавная, одна строчная буквы, одна цифра).
+        
+        Все поля обязательные.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUser"
+
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: Пользователь зарегистрирован.
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Ошибки валидации. Отсутствует обязательное поле или оно некорректно.
+
+  /auth/token/:
+    post:
+      tags:
+        - AUTH
+      summary: Получение токена.
+      description: |
+        Права доступа: **Доступно без токена.**
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/getTokenUser"
+
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenRefresh"
+          description: Удачное выполнение запроса
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Отсутствует обязательное поле или оно некорректно
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+          description: Пользователь не найден
+
+  /auth/token/refresh/:
+    post:
+      tags:
+        - AUTH
+      summary: Обновление токена.
+      description: |
+        Права доступа: **Доступно без токена.**
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/getRefreshToken"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+          description: Удачное выполнение запроса
+        400:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationError"
+          description: Отсутствует обязательное поле или оно некорректно
+        404:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+          description: Пользователь не найден
+
+components:
+  schemas:
+    NewUser:
+      title: Регистрируемый пользователь
+      type: object
+      required:
+        - username
+        - full_name
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 5
+          maxLength: 10
+          description: "login пользователя"
+        full_name:
+          type: string
+          minLength: 2
+          description: "Фамилия и имя пользователя"
+        email:
+          format: email
+          type: string
+          description: "Адрес электронной почты"
+        password:
+          type: string
+          minLength: 6
+          maxLength: 25
+          description: "Пароль пользователя"
+      example: { "username": "ipoop", "full_name": "Пупкин Иван",
+        "email":
+          "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
+
+    User:
+      title: Пользователь
+      type: object
+      properties:
+        username:
+          type: string
+          description: "login пользователя"
+      example: { "username": "ipoop" }
+
+    getTokenUser:
+      title: Запрос токена
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: "login пользователя"
+        password:
+          type: string
+          description: "Пароль пользователя"
+      example: { "username": "ipoop", "password": "sUPPerPA$$" }
+
+    getRefreshToken:
+      title: Запрос на обновление токена
+      type: object
+      required:
+        - refresh
+      properties:
+        refresh:
+          type: string
+          description: "полученный раннее refresh пользователя"
+      example: { "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
+
+    Token:
+      title: Токен
+      type: object
+      properties:
+        access:
+          type: string
+          description: "Токен"
+      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg" }
+
+    TokenRefresh:
+      title: Токен и обновление
+      type: object
+      properties:
+        access:
+          type: string
+          description: "Токен"
+        refresh:
+          type: string
+          description: "Обновление токена"
+      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg", "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
+
+    ValidationError:
+      title: Ошибка валидации
+      type: object
+      properties:
+        field_name:
+          type: array
+          items:
+            type: string
+
+    NotFound:
+      description: Объект не найден
+      type: object
+      properties:
+        detail:
+          description: 'Описание ошибки'
+          example: "Страница не найдена."
+          type: string
