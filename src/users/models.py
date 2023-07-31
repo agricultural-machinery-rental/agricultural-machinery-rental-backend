@@ -3,6 +3,7 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 from core.choices_classes import Role
+from core.enums import Limits
 from users.managers import UserManager
 
 
@@ -20,24 +21,25 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         verbose_name="Имя",
-        max_length=50,
+        max_length=Limits.MAX_LENGTH_FIRST_NAME,
         blank=False,
         null=False,
     )
     last_name = models.CharField(
         verbose_name="Фамилия",
-        max_length=50,
+        max_length=Limits.MAX_LENGTH_LAST_NAME,
         blank=False,
         null=False,
     )
     patronymic = models.CharField(
         verbose_name="Отчество",
-        max_length=50,
+        max_length=Limits.MAX_LENGTH_PATRONYMIC,
         blank=True,
         null=True,
     )
     phone_number = PhoneNumberField(
         verbose_name="Номер телефона",
+        max_length=Limits.MAX_LENGTH_PHONE_NUMBER,
         blank=False,
         null=False,
     )
