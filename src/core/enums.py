@@ -2,4 +2,4 @@ from enum import IntEnum
 
 
 class Limits(IntEnum):
-    DEFAULT_QUANTITY = 1
+    RESERVATION_COMMENT_MAX_LENGTH = 1000

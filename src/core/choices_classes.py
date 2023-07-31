@@ -19,11 +19,10 @@ class Category(models.IntegerChoices):
     LIFT_TRUCK = 9  # Погрузчик
 
 
-class ReservationStatus(models.IntegerChoices):
-    STATUS_VALID = 0
-    STATUS_CANCELLED = 1
-
-
-class OrderStatus(models.IntegerChoices):
-    AT_WORK = 0
-    FINISHED = 1
+class ReservationStatusOptions(models.IntegerChoices):
+    CREATED = 0
+    CONFIRMED = 1
+    CANCELLED_BY_CLIENT = 2
+    CANCELLED_BY_MANAGER = 3
+    AT_WORK = 4
+    FINISHED = 5

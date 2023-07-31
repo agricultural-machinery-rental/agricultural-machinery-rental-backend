@@ -1,24 +1,26 @@
 from django.contrib import admin
 
-from orders.models import Order, Reservation, ReservationList
-
-
-@admin.register(Order)
-class AdminOrder(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "reservation_list",
-        "payment_status",
-        "date_from",
-        "date_to",
-    )
+from orders.models import Reservation, ReservationStatus
 
 
 @admin.register(Reservation)
 class AdminReservation(admin.ModelAdmin):
-    list_display = ("id",)
+    list_display = (
+        "id",
+        "machinery",
+        "renter",
+        "start_date",
+        "end_date",
+        "status",
+        "is_need_attachment",
+        "is_need_driver",
+        "is_need_delivery",
+    )
 
 
-@admin.register(ReservationList)
-class AdminReservationList(admin.ModelAdmin):
-    list_display = ("id",)
+@admin.register(ReservationStatus)
+class AdminReservationStatus(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "time_update",
+    )
