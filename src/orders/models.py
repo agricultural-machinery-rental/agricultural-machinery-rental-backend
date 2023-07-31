@@ -14,8 +14,7 @@ class ReservationStatus(models.Model):
     name = models.IntegerField(
         "Статус резервирования",
         choices=ReservationStatusOptions.choices,
-        blank=True,
-        null=True,
+        default=ReservationStatusOptions.CREATED,
     )
     time_update = models.DateTimeField(
         "Дата изменения статуса",
@@ -50,12 +49,11 @@ class Reservation(models.Model):
     end_date = models.DateTimeField(
         "Дата окончания резервирования",
     )
-    status = models.ForeignKey(
+    status = models.OneToOneField(
         ReservationStatus,
         verbose_name="Статус резервирования",
         on_delete=models.PROTECT,
         related_name="reservations",
-        default=ReservationStatusOptions.CREATED,
     )
     is_need_attachment = models.BooleanField(
         "Навесное оборудование",
