@@ -42,7 +42,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "is_finished",
-                    models.BooleanField(default=False, verbose_name="Завершено"),
+                    models.BooleanField(
+                        default=False, verbose_name="Завершено"
+                    ),
                 ),
                 (
                     "time_create",
@@ -52,7 +54,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "time_finished",
-                    models.DateTimeField(auto_now=True, verbose_name="Дата завершения"),
+                    models.DateTimeField(
+                        auto_now=True, verbose_name="Дата завершения"
+                    ),
                 ),
             ],
             options={

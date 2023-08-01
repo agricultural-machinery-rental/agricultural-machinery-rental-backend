@@ -16,5 +16,5 @@ repos:
     - id: black
       language_version: python3.10
       args:
-        - --line-length=89
+        - --line-length=79
         - --include=src/
