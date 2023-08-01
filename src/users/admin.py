@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.contrib.auth.models import Group
 
-from users.models import User
+from users.models import Callback, User
 
 
 @admin.register(User)
@@ -36,6 +36,18 @@ class UserAdmin(ModelAdmin):
             },
         ),
     ]
+
+
+@admin.register(Callback)
+class CallbackAdmin(ModelAdmin):
+    search_fields = ("phone_number",)
+    list_display = (
+        "phone_number",
+        "comment",
+        "is_finished",
+        "time_create",
+        "time_finished",
+    )
 
 
 admin.site.unregister(Group)
