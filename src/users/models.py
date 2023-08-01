@@ -71,3 +71,41 @@ class User(AbstractUser):
     @property
     def is_moderator(self):
         return self.role == Role.MODERATOR
+
+
+class Callback(models.Model):
+    """
+    Обратный звонок.
+    """
+
+    phone_number = PhoneNumberField(
+        verbose_name="Номер телефона",
+        blank=False,
+        null=False,
+    )
+    comment = models.CharField(
+        verbose_name="Комментарий",
+        max_length=Limits.MAX_LENGTH_COMMENT,
+        blank=True,
+        null=True,
+    )
+    is_finished = models.BooleanField(
+        verbose_name="Завершено",
+        default=False,
+    )
+    time_create = models.DateTimeField(
+        verbose_name="Дата создания",
+        auto_now_add=True,
+    )
+    time_finished = models.DateTimeField(
+        verbose_name="Дата завершения",
+        auto_now=True,
+    )
+
+    class Meta:
+        verbose_name = "Обратный звонок"
+        verbose_name_plural = "Обратные звонки"
+        default_related_name = "callback"
+
+    def __str__(self) -> str:
+        return f"{self.phone_number}"
