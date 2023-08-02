@@ -83,3 +83,7 @@ class Machinery(models.Model):
         blank=False,
         null=False,
     )
+
+    class Meta:
+        verbose_name = "Карточка техники"
+        verbose_name_plural = "Карточки техники"

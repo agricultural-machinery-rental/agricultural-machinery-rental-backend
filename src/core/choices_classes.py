@@ -16,3 +16,12 @@ class Category(models.IntegerChoices):
     PLOWS = 6  # Плуги
     LIFT_TRUCKS = 7  # Погрузчики
     ATTACHMENTS = 8  # Навесное оборудование
+
+
+class ReservationStatusOptions(models.IntegerChoices):
+    CREATED = 0
+    CONFIRMED = 1
+    CANCELLED_BY_CLIENT = 2
+    CANCELLED_BY_MANAGER = 3
+    AT_WORK = 4
+    FINISHED = 5

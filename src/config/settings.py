@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
     "machineries.apps.MachineriesConfig",
+    "orders.apps.OrdersConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
 ]
