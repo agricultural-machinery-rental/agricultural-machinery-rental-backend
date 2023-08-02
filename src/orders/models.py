@@ -49,27 +49,15 @@ class Reservation(models.Model):
     end_date = models.DateTimeField(
         "Дата окончания резервирования",
     )
-    status = models.OneToOneField(
+    status = models.ForeignKey(
         ReservationStatus,
         verbose_name="Статус резервирования",
         on_delete=models.PROTECT,
         related_name="reservations",
     )
-    is_need_attachment = models.BooleanField(
-        "Навесное оборудование",
-        default=False,
-    )
-    is_need_driver = models.BooleanField(
-        "Водитель техники",
-        default=False,
-    )
-    is_need_delivery = models.BooleanField(
-        "Доставка техники",
-        default=False,
-    )
     comment = models.TextField(
         "Комментарий к резервированию",
-        max_length=Limits.RESERVATION_COMMENT_MAX_LENGTH,
+        max_length=Limits.MAX_LENGTH_COMMENT.value,
         blank=True,
         null=True,
     )

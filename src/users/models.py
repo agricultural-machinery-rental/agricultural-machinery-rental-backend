@@ -21,25 +21,25 @@ class User(AbstractUser):
     )
     first_name = models.CharField(
         verbose_name="Имя",
-        max_length=Limits.MAX_LENGTH_FIRST_NAME,
+        max_length=Limits.MAX_LENGTH_FIRST_NAME.value,
         blank=False,
         null=False,
     )
     last_name = models.CharField(
         verbose_name="Фамилия",
-        max_length=Limits.MAX_LENGTH_LAST_NAME,
+        max_length=Limits.MAX_LENGTH_LAST_NAME.value,
         blank=False,
         null=False,
     )
     patronymic = models.CharField(
         verbose_name="Отчество",
-        max_length=Limits.MAX_LENGTH_PATRONYMIC,
+        max_length=Limits.MAX_LENGTH_PATRONYMIC.value,
         blank=True,
         null=True,
     )
     phone_number = PhoneNumberField(
         verbose_name="Номер телефона",
-        max_length=Limits.MAX_LENGTH_PHONE_NUMBER,
+        max_length=Limits.MAX_LENGTH_PHONE_NUMBER.value,
         blank=False,
         null=False,
     )
@@ -85,7 +85,7 @@ class Callback(models.Model):
     )
     comment = models.CharField(
         verbose_name="Комментарий",
-        max_length=Limits.MAX_LENGTH_COMMENT,
+        max_length=Limits.MAX_LENGTH_COMMENT.value,
         blank=True,
         null=True,
     )

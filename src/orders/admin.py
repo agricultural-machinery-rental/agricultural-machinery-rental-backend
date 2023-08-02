@@ -12,9 +12,6 @@ class AdminReservation(admin.ModelAdmin):
         "start_date",
         "end_date",
         "status",
-        "is_need_attachment",
-        "is_need_driver",
-        "is_need_delivery",
     )
 
 
