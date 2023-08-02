@@ -1,3 +1,4 @@
+from django.contrib.auth import settings
 from django.db import models
 
 from core.choices_classes import Category
@@ -87,3 +88,34 @@ class Machinery(models.Model):
     class Meta:
         verbose_name = "Карточка техники"
         verbose_name_plural = "Карточки техники"
+
+
+class Favorite(models.Model):
+    """
+    Избранная пользователем техника.
+    """
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Пользователь",
+        on_delete=models.CASCADE,
+    )
+    machinery = models.ForeignKey(
+        Machinery,
+        verbose_name="Техника",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранные"
+        default_related_name = "favorite"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "machinery"],
+                name="double favorite (unique)",
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.user} добавил {self.machinery.name}"
