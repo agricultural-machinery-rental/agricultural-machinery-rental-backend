@@ -101,7 +101,7 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
     )
     machinery = models.ForeignKey(
-        MachineryInfo,
+        Machinery,
         verbose_name="Техника",
         on_delete=models.CASCADE,
     )
