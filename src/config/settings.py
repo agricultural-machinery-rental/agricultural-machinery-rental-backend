@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "machineries.apps.MachineriesConfig",
     "orders.apps.OrdersConfig",
     "rest_framework_simplejwt",
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +74,10 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "users.User"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
