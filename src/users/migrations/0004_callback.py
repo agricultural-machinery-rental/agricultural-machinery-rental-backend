@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                     "comment",
                     models.CharField(
                         blank=True,
-                        max_length=core.enums.Limits["MAX_LENGTH_COMMENT"],
+                        max_length=250,
                         null=True,
                         verbose_name="Комментарий",
                     ),
