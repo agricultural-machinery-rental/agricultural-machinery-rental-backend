@@ -1,0 +1,14 @@
+version: '3.3'
+
+volumes:
+  pg_data:
+
+services:
+  db:
+    image: postgres:13.10-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    env_file: .env
+    restart: on-failure
