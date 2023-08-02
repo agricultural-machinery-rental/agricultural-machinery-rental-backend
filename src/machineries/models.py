@@ -1,6 +1,6 @@
+from django.contrib.auth import settings
 from django.db import models
 
-from django.contrib.auth import settings
 from core.choices_classes import Category
 
 
