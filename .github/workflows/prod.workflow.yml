@@ -60,11 +60,12 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/amr
             cd deploy
             docker-compose stop
             docker-compose rm -f web
+            docker rmi $(docker images '${{ secrets.DOCKER_USERNAME }}/amr' -q)
             rm .env -f
             echo "$ENV_CONTENTS" > .env
+            echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
             docker-compose up -d
             docker-compose exec web python manage.py migrate
