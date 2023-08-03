@@ -1,0 +1,32 @@
+from rest_framework import serializers
+
+from api.v1.users.serializers import UserSerializer
+from core.choices_classes import ReservationStatusOptions
+from machineries.models import Machinery
+from orders.models import Reservation, ReservationStatus
+
+
+class CreateReservationSerializer(serializers.ModelSerializer):
+    machinery = serializers.PrimaryKeyRelatedField(
+        queryset=Machinery.objects.all()
+    )
+    renter = UserSerializer(read_only=True)
+
+    class Meta:
+        fields = ("machinery", "renter", "start_date", "end_date", "comment")
+        model = Reservation
+
+    def create(self, validated_data):
+        current_user = self.context["request"].user
+        machinery = validated_data.pop("machinery")
+        status = ReservationStatus.objects.create(
+            name=ReservationStatusOptions.CREATED
+        )
+        reservation = Reservation.objects.create(
+            machinery_id=machinery.id,
+            renter=current_user,
+            status=status,
+            **validated_data
+        )
+
+        return reservation

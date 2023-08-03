@@ -1,7 +1,13 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
-from api.v1.machineries.views import machineries_hello
+from api.v1.machineries.views import MachineryViewSet
+
+
+v1_router = DefaultRouter()
+
+v1_router.register("", MachineryViewSet, basename="machinery")
 
 urlpatterns = [
-    path("", machineries_hello),
+    path("", include(v1_router.urls)),
 ]
