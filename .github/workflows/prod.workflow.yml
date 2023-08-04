@@ -12,13 +12,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Generate .env
         run: |
-          export $(echo "${{ secrets.SECRET_KEY }}" | sed 's/[^a-zA-Z0-9_]/_/g' | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.ALLOWED_HOSTS }}" | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.POSTGRES_DB }}" | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.POSTGRES_USER }}" | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.POSTGRES_PASSWORD }}" | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.POSTGRES_SERVER }}" | sed 's/=/="/; s/$/"/')
-          export $(echo "${{ secrets.POSTGRES_PORT }}" | sed 's/=/="/; s/$/"/')
+          export SECRET_KEY=${{ secrets.SECRET_KEY }}
+          export ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }}
+          export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          export POSTGRES_USER=${{ secrets.POSTGRES_DB }}
+          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          export POSTGRES_SERVER=${{ secrets.POSTGRES_SERVER }}
+          export POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
           envsubst < .env.example > .env
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
