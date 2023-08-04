@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Generate .env
         run: |
-          export $(echo "${{ secrets.SECRET_KEY }}" | sed 's/=/="/; s/$/"/')
+          export $(echo "${{ secrets.SECRET_KEY }}" | sed 's/[^a-zA-Z0-9_]/_/g' | sed 's/=/="/; s/$/"/')
           export $(echo "${{ secrets.ALLOWED_HOSTS }}" | sed 's/=/="/; s/$/"/')
           export $(echo "${{ secrets.POSTGRES_DB }}" | sed 's/=/="/; s/$/"/')
           export $(echo "${{ secrets.POSTGRES_USER }}" | sed 's/=/="/; s/$/"/')
