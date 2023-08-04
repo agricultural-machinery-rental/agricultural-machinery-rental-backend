@@ -1,8 +1,9 @@
 name: Build and deploy to production
 on:
-  push:
+  pull_request:
+    types: closed
     branches:
-      - feature/deploy
+      - main
 jobs:
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
