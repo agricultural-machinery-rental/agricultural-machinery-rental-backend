@@ -1,9 +1,8 @@
 name: Build and deploy to production
 on:
-  pull_request:
-    types: closed
+  push:
     branches:
-      - main
+      - feature/deploy
 jobs:
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
@@ -62,10 +61,10 @@ jobs:
           script: |
             cd deploy
             docker-compose stop
-            docker-compose rm -f web
+            docker-compose rm -f backend
             docker rmi $(docker images '${{ secrets.DOCKER_USERNAME }}/amr' -q)
             rm .env -f
             echo "$ENV_CONTENTS" > .env
             echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
             docker-compose up -d
-            docker-compose exec web python manage.py migrate
+            docker-compose exec backend python manage.py migrate
