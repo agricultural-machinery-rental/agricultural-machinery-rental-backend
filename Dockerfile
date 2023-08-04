@@ -8,6 +8,6 @@ COPY requirements.txt /app
 RUN pip3 install -U pip && \
     pip3 install -r /app/requirements.txt --no-cache-dir
 
-COPY ${ENV_FILE} /app/.env
+COPY .env /app
 COPY ./src /app
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0:8000" ]
