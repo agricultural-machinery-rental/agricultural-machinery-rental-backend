@@ -40,7 +40,7 @@ jobs:
           username: ${{ secrets.SERVER_LOGIN }}
           password: ${{ secrets.SERVER_PASSWORD }}
           source: ".env"
-          target: deploy
+          target: ${{ secrets.TARGET_SERVER_PATH }}
 
   deploy:
     name: Deploy from image in Docker Hub
@@ -58,7 +58,6 @@ jobs:
             docker-compose stop
             docker-compose rm -f backend
             docker rmi $(docker images '${{ secrets.DOCKER_USERNAME }}/amr' -q)
-            rm .env -f
-            echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
+            echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" >> .env
             docker-compose up -d
             docker-compose exec backend python manage.py migrate
