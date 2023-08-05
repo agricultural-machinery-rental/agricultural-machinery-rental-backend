@@ -1,7 +1,8 @@
 from django.urls import path
 
-from api.v1.users.views import user_hello
+from .views import CallbackList
+
 
 urlpatterns = [
-    path("", user_hello),
+    path("callback", CallbackList.as_view()),
 ]

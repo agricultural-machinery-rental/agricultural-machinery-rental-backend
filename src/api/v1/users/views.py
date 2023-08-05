@@ -1,8 +1,9 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import generics
+
+from users.models import Callback
+from .serializers import CallbackSerializer
 
 
-@api_view(["GET"])
-def user_hello(request):
-    result = {"user": "Hello world"}
-    return Response(result)
+class CallbackList(generics.ListCreateAPIView):
+    queryset = Callback.objects.all()
+    serializer_class = CallbackSerializer
