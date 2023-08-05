@@ -1,5 +1,3 @@
-from importlib.resources import _
-
 from django.db import models
 
 
@@ -10,14 +8,14 @@ class Role(models.IntegerChoices):
 
 
 class Category(models.IntegerChoices):
-    TRACTORS = 1, _("Трактор")
-    COMBINES = 2, _("Комбайны")
-    EQUIPMENT_SOWING = 3, _("Посевная техника")
-    MOTORIZED_TRACTORS = 4, _("Мототракторы")
-    TRAILERS = 5, _("Прицепы")
-    PLOWS = 6, _("Плуги")
-    LIFT_TRUCKS = 7, _("Погрузчики")
-    ATTACHMENTS = 8, _("Навесное оборудование")
+    TRACTORS = 1, "Трактора"
+    COMBINES = 2, "Комбайны"
+    EQUIPMENT_SOWING = 3, "Посевная техника"
+    MOTORIZED_TRACTORS = 4, "Мототракторы"
+    TRAILERS = 5, "Прицепы"
+    PLOWS = 6, "Плуги"
+    LIFT_TRUCKS = 7, "Погрузчики"
+    ATTACHMENTS = 8, "Навесное оборудование"
 
 
 class ReservationStatusOptions(models.IntegerChoices):
