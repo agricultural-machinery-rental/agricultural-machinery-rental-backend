@@ -1,8 +1,15 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import viewsets
+
+from api.v1.machineries.serializers import MachinerySerializer
+from machineries.models import Machinery
 
 
-@api_view(["GET"])
-def machineries_hello(request):
-    result = {"machinery": "Hello world"}
-    return Response(result)
+class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для техники.
+    Обрабатываемые запросы: GET (list&detail).
+    Эндпоинты: /machineries/
+    """
+
+    queryset = Machinery.objects.all()
+    serializer_class = MachinerySerializer
