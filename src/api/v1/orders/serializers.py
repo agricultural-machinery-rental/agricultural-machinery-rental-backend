@@ -7,8 +7,10 @@ from orders.models import Reservation, ReservationStatus
 
 
 class CreateReservationSerializer(serializers.ModelSerializer):
+    """Сериализатор для создания резервирования."""
+
     machinery = serializers.PrimaryKeyRelatedField(
-        queryset=Machinery.objects.all()
+        queryset=Machinery.objects.all(),
     )
     renter = UserSerializer(read_only=True)
 
@@ -28,5 +30,4 @@ class CreateReservationSerializer(serializers.ModelSerializer):
             status=status,
             **validated_data
         )
-
         return reservation
