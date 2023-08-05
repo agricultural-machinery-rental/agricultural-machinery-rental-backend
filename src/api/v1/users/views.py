@@ -12,6 +12,7 @@ class CallbackList(generics.CreateAPIView):
     Доступен неавторизованным пользователям.
     Эндпоинт users/callback.
     """
+
     queryset = Callback.objects.all()
     serializer_class = CallbackSerializer
     permission_classes = [AllowAny]

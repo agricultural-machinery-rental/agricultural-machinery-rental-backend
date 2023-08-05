@@ -5,6 +5,7 @@ from users.models import Callback
 
 class CallbackSerializer(serializers.ModelSerializer):
     """Сериализатор для Обратного звонка."""
+
     class Meta:
         model = Callback
         fields = (
