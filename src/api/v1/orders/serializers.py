@@ -6,6 +6,14 @@ from machineries.models import Machinery
 from orders.models import Reservation, ReservationStatus
 
 
+class ReservationStatusSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра и изменения статусов резервирования."""
+
+    class Meta:
+        fields = ("id", "name", "time_update")
+        model = ReservationStatus
+
+
 class CreateReservationSerializer(serializers.ModelSerializer):
     """Сериализатор для создания резервирования."""
 
@@ -15,7 +23,14 @@ class CreateReservationSerializer(serializers.ModelSerializer):
     renter = UserSerializer(read_only=True)
 
     class Meta:
-        fields = ("machinery", "renter", "start_date", "end_date", "comment")
+        fields = (
+            "id",
+            "machinery",
+            "renter",
+            "start_date",
+            "end_date",
+            "comment",
+        )
         model = Reservation
 
     def create(self, validated_data):
@@ -31,3 +46,27 @@ class CreateReservationSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return reservation
+
+
+class ReservationSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра и обновления резервирований."""
+
+    status = ReservationStatusSerializer()
+
+    class Meta:
+        fields = (
+            "id",
+            "machinery",
+            "renter",
+            "start_date",
+            "end_date",
+            "status",
+        )
+        model = Reservation
+
+    def update(self, instance, validated_data):
+        status_name = validated_data.pop("name")
+        status = ReservationStatus.objects.get(name=status_name)
+        instance.status = status
+        instance.save()
+        return instance

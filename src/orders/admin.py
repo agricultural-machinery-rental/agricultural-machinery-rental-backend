@@ -18,6 +18,7 @@ class AdminReservation(admin.ModelAdmin):
 @admin.register(ReservationStatus)
 class AdminReservationStatus(admin.ModelAdmin):
     list_display = (
+        "id",
         "name",
         "time_update",
     )

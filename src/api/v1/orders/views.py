@@ -1,10 +1,15 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import status, mixins, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.v1.orders.serializers import CreateReservationSerializer
+from api.v1.orders.serializers import (
+    CreateReservationSerializer,
+    ReservationSerializer,
+    ReservationStatusSerializer,
+)
 from machineries.models import Machinery
+from orders.models import Reservation, ReservationStatus
 
 
 class CreateReservationApiView(APIView):
@@ -29,3 +34,26 @@ class CreateReservationApiView(APIView):
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST
             )
+
+
+class ReservationViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """ViewSet для просмотра и обновления резервирований."""
+
+    queryset = Reservation.objects.all()
+    serializer_class = ReservationSerializer
+
+
+class ReservationStatusViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet,
+):
+    """ViewSet для просмотра и обновления статусов резервирований."""
+
+    queryset = ReservationStatus.objects.all()
+    serializer_class = ReservationStatusSerializer
