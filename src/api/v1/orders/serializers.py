@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from api.v1.users.serializers import UserSerializer
@@ -35,7 +36,27 @@ class CreateReservationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         current_user = self.context["request"].user
-        machinery = validated_data.pop("machinery")
+        machinery = validated_data["machinery"]
+        start_date = validated_data["start_date"]
+        end_date = validated_data["end_date"]
+
+        if start_date < timezone.now():
+            raise serializers.ValidationError("Выбранная дата уже прошла.")
+
+        if end_date < start_date:
+            raise serializers.ValidationError(
+                "Дата окончания должна быть позже даты начала."
+            )
+
+        existing_reservations = Reservation.objects.filter(
+            machinery=machinery,
+            start_date__lte=end_date,
+            end_date__gte=start_date,
+        )
+
+        if existing_reservations.exists():
+            raise serializers.ValidationError("Выбранные даты уже заняты.")
+
         status = ReservationStatus.objects.create(
             name=ReservationStatusOptions.CREATED
         )
