@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import status, mixins, viewsets
+from rest_framework import status, mixins, permissions, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -10,10 +10,13 @@ from api.v1.orders.serializers import (
 )
 from machineries.models import Machinery
 from orders.models import Reservation, ReservationStatus
+from api.v1.orders.permissions import IsOwner
 
 
 class CreateReservationApiView(APIView):
     """ApiView для создания резервирования."""
+
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, id):
         machinery = get_object_or_404(Machinery, pk=id)
@@ -46,6 +49,7 @@ class ReservationViewSet(
 
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
+    permission_classes = (IsOwner,)
 
 
 class ReservationStatusViewSet(
@@ -57,3 +61,4 @@ class ReservationStatusViewSet(
 
     queryset = ReservationStatus.objects.all()
     serializer_class = ReservationStatusSerializer
+    permission_classes = (IsOwner,)
