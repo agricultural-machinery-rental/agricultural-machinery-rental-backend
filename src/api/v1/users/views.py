@@ -1,8 +1,18 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+
+from users.models import Callback
+from api.v1.users.serializers import CallbackSerializer
 
 
-@api_view(["GET"])
-def user_hello(request):
-    result = {"user": "Hello world"}
-    return Response(result)
+class CallbackList(generics.CreateAPIView):
+    """
+    Дженерик для Обратного звонка.
+    Обрабатывает только POST запрос.
+    Доступен неавторизованным пользователям.
+    Эндпоинт users/callback.
+    """
+
+    queryset = Callback.objects.all()
+    serializer_class = CallbackSerializer
+    permission_classes = [AllowAny]
