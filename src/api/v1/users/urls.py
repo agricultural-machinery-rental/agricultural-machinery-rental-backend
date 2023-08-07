@@ -8,7 +8,6 @@ router.register("", views.UserViewSet)
 
 urlpatterns = [
     path("change-password/", views.set_password),
-    path("logout/", views.del_token),
     path("token/", views.MyTokenObtainPairView.as_view()),
     path("", include(router.urls)),
 ]

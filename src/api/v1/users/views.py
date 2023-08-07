@@ -1,11 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import permissions, status
-from rest_framework.authtoken.models import Token
-from rest_framework.decorators import (
-    api_view,
-    authentication_classes,
-    permission_classes,
-)
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -30,27 +25,7 @@ class UserViewSet(ModelViewSet):
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = serializers.MyTokenObtainPairSerializer
-
-
-@api_view(["POST"])
-@authentication_classes([])
-@permission_classes([])
-def get_token(request):
-    serializer = serializers.AuthTokenSerializer(data=request.data)
-    if serializer.is_valid():
-        user = User.objects.get(email=request.data["email"])
-        token, _ = Token.objects.get_or_create(user=user)
-        return Response({"token": token.key}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
-def del_token(request):
-    token, _ = Token.objects.get_or_create(user=request.user)
-    token.delete()
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    serializer_class = serializers.CustomTokenObtainPairSerializer
 
 
 @api_view(["POST"])

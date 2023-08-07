@@ -9,22 +9,6 @@ from core.enums import Limits
 from users.models import User
 
 
-class AuthTokenSerializer(ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,
-    )
-
-    class Meta:
-        model = User
-        fields = ("email", "password")
-
-    def validate(self, attrs):
-        user = get_object_or_404(User, email=attrs["email"])
-        if not user.check_password(attrs["password"]):
-            raise serializers.ValidationError({"password": "wrong password"})
-        return attrs
-
-
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
@@ -49,7 +33,9 @@ class CreateUserSerializer(ModelSerializer):
     patronymic = serializers.CharField(
         max_length=Limits.MAX_LENGTH_PATRONYMIC, allow_blank=True, default=None
     )
-    phone_number = PhoneNumberField()
+    phone_number = PhoneNumberField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -78,8 +64,26 @@ class ChangePasswordSerializer(Serializer):
         return attrs
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    email_or_phone = serializers.CharField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.pop("email")
+        self.fields["email_or_phone"] = serializers.CharField()
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields[self.username_field] = fields.pop("email_or_phone")
+        return fields
+
     def validate(self, attrs):
+        email_or_phone = attrs.pop("email_or_phone")
+        if "@" in email_or_phone:
+            user_data = {"email": email_or_phone}
+        else:
+            user_data = {"phone_number": email_or_phone}
+        user = get_object_or_404(User, **user_data)
+        attrs["email"] = user.email
         data = super().validate(attrs)
-        refresh = self.get_token(self.user)
         return data
