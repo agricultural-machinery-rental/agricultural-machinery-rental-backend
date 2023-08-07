@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
+    "django_filters",
 ]
 
 MIDDLEWARE = [

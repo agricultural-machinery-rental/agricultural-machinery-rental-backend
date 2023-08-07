@@ -1,16 +1,26 @@
 from rest_framework import serializers
 
 from core.choices_classes import Category
-from machineries.models import Machinery, MachineryInfo
+from machineries.models import Machinery, MachineryInfo, MachineryBrandname
+
+
+class MachineryBrandnameSerializer(serializers.ModelSerializer):
+    """Сериализация информации о Марке техники"""
+
+    class Meta:
+        model = MachineryBrandname
+        fields = ("brand",)
 
 
 class MachineryInfoSerializer(serializers.ModelSerializer):
     """Сериализация информации о технике."""
 
     category = serializers.SerializerMethodField()
+    mark = MachineryBrandnameSerializer(read_only=True)
 
     class Meta:
         fields = (
+            "mark",
             "name",
             "category",
             "description",
