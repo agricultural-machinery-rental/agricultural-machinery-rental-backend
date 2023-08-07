@@ -1,8 +1,7 @@
 from django.contrib.auth import get_user_model
-from rest_framework import permissions, status
+from rest_framework import permissions, status, mixins, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.users import serializers
@@ -11,7 +10,17 @@ from api.v1.users.permissions import NicePerson
 User = get_user_model()
 
 
-class UserViewSet(ModelViewSet):
+class NotListViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    pass
+
+
+class UserViewSet(NotListViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
