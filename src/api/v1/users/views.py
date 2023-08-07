@@ -6,6 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.users import serializers
+from api.v1.users.permissions import NicePerson
 
 User = get_user_model()
 
@@ -21,7 +22,7 @@ class UserViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action == "create":
             return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+        return [NicePerson()]
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -29,7 +30,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 @api_view(["POST"])
-@permission_classes([permissions.IsAuthenticated])
+@permission_classes([NicePerson])
 def set_password(request):
     data = request.data
     data["user"] = request.user
