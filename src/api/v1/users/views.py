@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
-from rest_framework import permissions, status, mixins, viewsets
+from rest_framework import generics, permissions, status, mixins, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.users import serializers
 from api.v1.users.permissions import NicePerson
+from users.models import Callback
 
 User = get_user_model()
 
@@ -50,3 +51,16 @@ def set_password(request):
         user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CallbackList(generics.CreateAPIView):
+    """
+    Дженерик для Обратного звонка.
+    Обрабатывает только POST запрос.
+    Доступен неавторизованным пользователям.
+    Эндпоинт users/callback.
+    """
+
+    queryset = Callback.objects.all()
+    serializer_class = serializers.CallbackSerializer
+    permission_classes = [permissions.AllowAny]

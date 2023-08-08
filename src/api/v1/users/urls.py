@@ -11,5 +11,6 @@ urlpatterns = [
     path("change-password/", views.set_password),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("token/", views.MyTokenObtainPairView.as_view()),
+    path("callback", views.CallbackList.as_view()),
     path("", include(router.urls)),
 ]

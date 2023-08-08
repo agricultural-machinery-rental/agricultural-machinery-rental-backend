@@ -6,7 +6,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from core.enums import Limits
-from users.models import User
+from users.models import Callback, User
 
 
 class UserSerializer(ModelSerializer):
@@ -87,3 +87,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         attrs["email"] = user.email
         data = super().validate(attrs)
         return data
+
+
+class CallbackSerializer(serializers.ModelSerializer):
+    """Сериализатор для Обратного звонка."""
+
+    class Meta:
+        model = Callback
+        fields = (
+            "phone_number",
+            "comment",
+        )
