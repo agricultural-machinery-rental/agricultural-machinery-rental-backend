@@ -42,6 +42,7 @@ class User(AbstractUser):
         max_length=Limits.MAX_LENGTH_PHONE_NUMBER.value,
         blank=False,
         null=False,
+        unique=True,
     )
     role = models.IntegerField(
         verbose_name="Роль",
