@@ -35,7 +35,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
                 return Response(
                     {
                         "message": f"Такой объект уже добавлен в "
-                        f"{Machinery._meta.verbose_name.title()}"
+                        f"{Favorite._meta.verbose_name.title()}"
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -48,7 +48,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(
                 {
                     "message": f"Такой объект отсутствует в "
-                    f"{Machinery._meta.verbose_name.title()}"
+                    f"{Favorite._meta.verbose_name.title()}"
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
