@@ -23,26 +23,6 @@ class NumericField(models.CharField):
         return value
 
 
-class Organization(models.Model):
-    """
-    Организация
-    """
-
-    name = models.CharField(
-        verbose_name="Название организации",
-        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION.value,
-        blank=False,
-        null=False,
-    )
-    inn = NumericField(
-        verbose_name="ИНН организации",
-        max_length=Limits.LENGTH_INN.value,
-        validators=[MinLengthValidator(Limits.LENGTH_INN)],
-        blank=False,
-        null=False,
-    )
-
-
 class User(AbstractUser):
     """
     Переопределенный пользователь
@@ -85,11 +65,17 @@ class User(AbstractUser):
         choices=Role.choices,
         default=Role.USER,
     )
-    organization = models.ForeignKey(
-        Organization,
-        on_delete=models.PROTECT,
-        related_name="users",
-        verbose_name="Организация",
+    organization_name = models.CharField(
+        verbose_name="Название организации",
+        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION.value,
+        blank=True,
+        null=True,
+    )
+    inn = NumericField(
+        verbose_name="ИНН организации",
+        max_length=Limits.LENGTH_INN.value,
+        validators=[MinLengthValidator(Limits.LENGTH_INN)],
+        blank=True,
         null=True,
     )
 

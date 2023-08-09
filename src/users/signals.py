@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 
-from config.settings import EMAIL_HOST
+from config.settings import EMAIL_HOST_USER
 
 
 @receiver(reset_password_token_created)
@@ -43,11 +43,11 @@ def password_reset_token_created(
 
     msg = EmailMultiAlternatives(
         # title:
-        "Сброс пароля на {title}".format(title="Агропарк"),
+        "Сброс пароля на {title}".format(title="АгроПарк"),
         # message:
         email_plaintext_message,
         # from:
-        EMAIL_HOST,
+        EMAIL_HOST_USER,
         # to:
         [reset_password_token.user.email],
     )

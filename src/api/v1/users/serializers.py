@@ -6,20 +6,22 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from core.enums import Limits
-from users.models import Callback, Organization, User
+from users.models import Callback, User
 
 
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "email",
             "first_name",
             "last_name",
             "patronymic",
             "phone_number",
             "role",
-            "organization",
+            "organization_name",
+            "inn",
         )
 
 
@@ -37,6 +39,11 @@ class CreateUserSerializer(ModelSerializer):
     phone_number = PhoneNumberField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    organization_name = serializers.CharField(
+        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION,
+        allow_null=True,
+        default=None,
+    )
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -47,11 +54,24 @@ class CreateUserSerializer(ModelSerializer):
             "last_name",
             "patronymic",
             "phone_number",
+            "organization_name",
+            "inn",
             "password",
         )
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+    def validate(self, data):
+        if self.context["request"].method != "POST":
+            if data.get("password"):
+                data.pop("password")
+        inn = data.get("inn")
+        if inn is None:
+            return data
+        if not inn.isdigit():
+            raise serializers.ValidationError({"inn": "Неверный формат ИНН"})
+        return data
 
 
 class ChangePasswordSerializer(Serializer):
@@ -99,25 +119,6 @@ class CallbackSerializer(serializers.ModelSerializer):
             "phone_number",
             "comment",
         )
-
-
-class OrganizationSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(
-        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION
-    )
-
-    class Meta:
-        model = Organization
-        fields = (
-            "name",
-            "inn",
-        )
-
-    def validate(self, data):
-        inn = data["inn"]
-        if not inn.isdigit() or len(inn) != Limits.LENGTH_INN:
-            raise serializers.ValidationError({"inn": "Неверный формат ИНН"})
-        return data
 
 
 class ResetPasswordEmailSerializer(serializers.Serializer):

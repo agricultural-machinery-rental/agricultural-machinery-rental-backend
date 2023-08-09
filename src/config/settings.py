@@ -122,9 +122,6 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-
 if os.getenv("EMAIL_FILE") == "YES":
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
@@ -132,5 +129,6 @@ else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_USE_TLS = True if os.getenv("EMAIL_USE_TLS") == "YES" else False
     EMAIL_PORT = os.getenv("EMAIL_PORT")
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_HOST = os.getenv("EMAIL_HOST_USER", "noreply@server.com")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@server.com")
