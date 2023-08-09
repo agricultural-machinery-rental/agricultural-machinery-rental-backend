@@ -78,6 +78,11 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
+    birthday = models.DateField(
+        verbose_name="Дата рождения",
+        blank=True,
+        null=True,
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []

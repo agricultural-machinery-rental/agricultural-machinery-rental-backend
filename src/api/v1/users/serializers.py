@@ -22,6 +22,7 @@ class UserSerializer(ModelSerializer):
             "role",
             "organization_name",
             "inn",
+            "birthday",
         )
 
 
@@ -56,6 +57,7 @@ class CreateUserSerializer(ModelSerializer):
             "phone_number",
             "organization_name",
             "inn",
+            "birthday",
             "password",
         )
 
