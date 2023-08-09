@@ -6,7 +6,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from core.enums import Limits
-from users.models import Callback, User
+from users.models import Callback, Organization, User
 
 
 class UserSerializer(ModelSerializer):
@@ -19,6 +19,7 @@ class UserSerializer(ModelSerializer):
             "patronymic",
             "phone_number",
             "role",
+            "organization",
         )
 
 
@@ -98,3 +99,22 @@ class CallbackSerializer(serializers.ModelSerializer):
             "phone_number",
             "comment",
         )
+
+
+class OrganizationSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(
+        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION
+    )
+
+    class Meta:
+        model = Organization
+        fields = (
+            "name",
+            "inn",
+        )
+
+    def validate(self, data):
+        inn = data["inn"]
+        if not inn.isdigit() or len(inn) != Limits.LENGTH_INN:
+            raise serializers.ValidationError({"inn": "Неверный формат ИНН"})
+        return data

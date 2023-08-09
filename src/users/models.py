@@ -1,10 +1,46 @@
+import re
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 from core.choices_classes import Role
 from core.enums import Limits
 from users.managers import UserManager
+
+
+class NumericField(models.CharField):
+    """
+    Текстовое поле, разрешенный ввод только цифры
+    """
+
+    def clean(self, value, model_instance):
+        value = super(NumericField, self).clean(value, model_instance)
+        if not re.match(r"\d+", value):
+            raise ValidationError("Только цифры")
+        return value
+
+
+class Organization(models.Model):
+    """
+    Организация
+    """
+
+    name = models.CharField(
+        verbose_name="Название организации",
+        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION.value,
+        blank=False,
+        null=False,
+    )
+    inn = NumericField(
+        verbose_name="ИНН организации",
+        max_length=Limits.LENGTH_INN.value,
+        validators=[MinLengthValidator(Limits.LENGTH_INN)],
+        blank=False,
+        null=False,
+    )
 
 
 class User(AbstractUser):
@@ -48,6 +84,13 @@ class User(AbstractUser):
         verbose_name="Роль",
         choices=Role.choices,
         default=Role.USER,
+    )
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.PROTECT,
+        related_name="users",
+        verbose_name="Организация",
+        null=True,
     )
 
     USERNAME_FIELD = "email"
