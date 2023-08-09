@@ -1,45 +1,17 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import status, mixins, permissions, viewsets
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import mixins, viewsets
+
 
 from api.v1.orders.serializers import (
     CreateReservationSerializer,
-    ReservationSerializer,
+    ReadReservationSerializer,
     ReservationStatusSerializer,
 )
-from machineries.models import Machinery
 from orders.models import Reservation, ReservationStatus
 from api.v1.orders.permissions import IsOwner
 
 
-class CreateReservationApiView(APIView):
-    """ApiView для создания резервирования."""
-
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def post(self, request, id):
-        machinery = get_object_or_404(Machinery, pk=id)
-        data = {
-            "renter": request.user.pk,
-            "machinery": machinery.pk,
-            "start_date": request.data.get("start_date"),
-            "end_date": request.data.get("end_date"),
-            "comment": request.data.get("comment"),
-        }
-        serializer = CreateReservationSerializer(
-            data=data, context={"request": request}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST
-            )
-
-
 class ReservationViewSet(
+    mixins.CreateModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
@@ -48,8 +20,13 @@ class ReservationViewSet(
     """ViewSet для просмотра и обновления резервирований."""
 
     queryset = Reservation.objects.all()
-    serializer_class = ReservationSerializer
-    permission_classes = (IsOwner,)
+    serializer_class = CreateReservationSerializer
+    # permission_classes = (IsOwner,)
+
+    def get_serializer_class(self):
+        if self.request.method in ("POST", "PATCH"):
+            return CreateReservationSerializer
+        return ReadReservationSerializer
 
 
 class ReservationStatusViewSet(
@@ -61,4 +38,4 @@ class ReservationStatusViewSet(
 
     queryset = ReservationStatus.objects.all()
     serializer_class = ReservationStatusSerializer
-    permission_classes = (IsOwner,)
+    # permission_classes = (IsOwner,)

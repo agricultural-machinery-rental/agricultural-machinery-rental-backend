@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -37,25 +38,7 @@ class CreateReservationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         current_user = self.context["request"].user
         machinery = validated_data["machinery"]
-        start_date = validated_data["start_date"]
-        end_date = validated_data["end_date"]
-
-        if start_date < timezone.now():
-            raise serializers.ValidationError("Выбранная дата уже прошла.")
-
-        if end_date < start_date:
-            raise serializers.ValidationError(
-                "Дата окончания должна быть позже даты начала."
-            )
-
-        existing_reservations = Reservation.objects.filter(
-            machinery=machinery,
-            start_date__lte=end_date,
-            end_date__gte=start_date,
-        )
-
-        if existing_reservations.exists():
-            raise serializers.ValidationError("Выбранные даты уже заняты.")
+        self.validate(validated_data)
 
         status = ReservationStatus.objects.create(
             name=ReservationStatusOptions.CREATED
@@ -68,9 +51,33 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         )
         return reservation
 
+    def update(self, instance, validated_data):
+        self.validate(validated_data)
+        instance = super().update(instance, validated_data)
+        return instance
 
-class ReservationSerializer(serializers.ModelSerializer):
-    """Сериализатор для просмотра и обновления резервирований."""
+    def validate(self, data):
+
+        if data.get("start_date") < timezone.now():
+            raise serializers.ValidationError("Выбранная дата уже прошла.")
+        if data.get("end_date") < data.get("start_date"):
+            raise serializers.ValidationError(
+                "Дата окончания должна быть позже даты начала."
+            )
+        existing_reservations = Reservation.objects.filter(
+            machinery=data.get("machinery"),
+            start_date__lte=data.get("end_date"),
+            end_date__gte=data.get("start_date"),
+        ).exclude(status__name=ReservationStatusOptions.CANCELLED)
+
+        if existing_reservations.exists():
+            raise serializers.ValidationError("Выбранные даты уже заняты.")
+
+        return data
+
+
+class ReadReservationSerializer(serializers.ModelSerializer):
+    """Сериализатор для просмотра резервирований."""
 
     status = ReservationStatusSerializer()
 
@@ -84,10 +91,3 @@ class ReservationSerializer(serializers.ModelSerializer):
             "status",
         )
         model = Reservation
-
-    def update(self, instance, validated_data):
-        status_name = validated_data.pop("name")
-        status = ReservationStatus.objects.get(name=status_name)
-        instance.status = status
-        instance.save()
-        return instance

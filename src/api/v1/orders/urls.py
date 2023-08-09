@@ -1,11 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.v1.orders.views import (
-    CreateReservationApiView,
-    ReservationStatusViewSet,
-    ReservationViewSet,
-)
+from api.v1.orders.views import ReservationStatusViewSet, ReservationViewSet
 
 app_name = "orders"
 
@@ -19,10 +15,5 @@ v1_router.register(
 )
 
 urlpatterns = [
-    path(
-        "machineries/<int:id>/reserve/",
-        CreateReservationApiView.as_view(),
-        name="create_reservation",
-    ),
     path("", include(v1_router.urls)),
 ]
