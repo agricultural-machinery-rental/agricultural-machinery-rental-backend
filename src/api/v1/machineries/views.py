@@ -1,11 +1,12 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.v1.machineries.serializers import MachinerySerializer
-from machineries.models import Machinery
+from machineries.models import Favorite, Machinery
 
 
 class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -22,10 +23,11 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         detail=True,
         methods=("post", "delete"),
         url_path="favorite",
+        permission_classes=(permissions.IsAuthenticated,),
     )
     def favorite(self, request, *args, **kwargs):
         machinery = get_object_or_404(Machinery, pk=kwargs["pk"])
-        queryset = Machinery.objects.filter(
+        queryset = Favorite.objects.filter(
             user=request.user, machinery=machinery
         )
         if request.method == "POST":
@@ -40,7 +42,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             serializer = MachinerySerializer(
                 machinery, context={"request": request}
             )
-            Machinery.objects.create(user=request.user, machinery=machinery)
+            Favorite.objects.create(user=request.user, machinery=machinery)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not queryset:
             return Response(
