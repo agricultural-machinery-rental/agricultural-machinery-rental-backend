@@ -118,3 +118,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
         if not inn.isdigit() or len(inn) != Limits.LENGTH_INN:
             raise serializers.ValidationError({"inn": "Неверный формат ИНН"})
         return data
+
+
+class ResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
