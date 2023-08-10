@@ -52,6 +52,7 @@ class MachinerySerializer(serializers.ModelSerializer):
     """Сериализация техники."""
 
     machinery = MachineryInfoSerializer(read_only=True)
+    is_favorited = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         fields = (
@@ -63,6 +64,13 @@ class MachinerySerializer(serializers.ModelSerializer):
             "delivery_distance_km",
             "delivery_cost",
             "rental_price",
+            "is_favorited",
             "machinery",
         )
         model = Machinery
+
+    def get_is_favorited(self, obj):
+        request = self.context.get("request")
+        if request.user.is_anonymous:
+            return False
+        return obj.favorite.filter(user=request.user).exists()

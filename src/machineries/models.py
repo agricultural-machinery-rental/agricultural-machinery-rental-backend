@@ -147,4 +147,4 @@ class Favorite(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.user} добавил {self.machinery.name}"
+        return f"{self.user} добавил {self.machinery.machinery.name}"
