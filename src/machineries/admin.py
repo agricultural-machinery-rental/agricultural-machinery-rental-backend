@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from machineries.models import Favorite, Machinery, MachineryInfo
+from machineries.models import (
+    Favorite,
+    Machinery,
+    MachineryInfo,
+    ImageMachinery,
+)
 
 
 @admin.register(Machinery)
@@ -10,6 +15,11 @@ class AdminMachinery(admin.ModelAdmin):
 
 @admin.register(MachineryInfo)
 class AdminMachineryInfo(admin.ModelAdmin):
+    list_display = ("id",)
+
+
+@admin.register(ImageMachinery)
+class AdminImageMachinery(admin.ModelAdmin):
     list_display = ("id",)
 
 

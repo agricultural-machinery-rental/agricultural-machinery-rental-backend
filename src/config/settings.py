@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "phonenumber_field",
     "drf_yasg",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
