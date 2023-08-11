@@ -12,9 +12,7 @@ if os.path.exists(dotenv_path):
 
 SECRET_KEY = os.getenv("SECRET_KEY", "40r-my-5&cr&+k#y")
 DEBUG = True if os.getenv("DEBUG") == "YES" else False
-ALLOWED_HOSTS = [
-    os.getenv("ALLOWED_HOSTS"),
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").strip(", ")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
