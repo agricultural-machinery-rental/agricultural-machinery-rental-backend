@@ -3,7 +3,12 @@ from rest_framework import serializers
 from api.v1.machineries.fields import Base64ImageField
 from core.choices_classes import Category
 
-from machineries.models import ImageMachinery, Machinery, MachineryInfo, MachineryBrandname
+from machineries.models import (
+    ImageMachinery,
+    Machinery,
+    MachineryInfo,
+    MachineryBrandname,
+)
 
 
 class MachineryBrandnameSerializer(serializers.ModelSerializer):
@@ -30,7 +35,7 @@ class ImageSerializer(serializers.ModelSerializer):
         )
         model = ImageMachinery
 
-        
+
 class MachineryInfoSerializer(serializers.ModelSerializer):
     """Сериализация информации о технике."""
 
