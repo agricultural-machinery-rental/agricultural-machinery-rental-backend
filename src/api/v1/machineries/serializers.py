@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
+from api.v1.machineries.fields import Base64ImageField
 from core.choices_classes import Category
-from machineries.models import Machinery, MachineryInfo, MachineryBrandname
+
+from machineries.models import ImageMachinery, Machinery, MachineryInfo, MachineryBrandname
 
 
 class MachineryBrandnameSerializer(serializers.ModelSerializer):
@@ -12,16 +14,39 @@ class MachineryBrandnameSerializer(serializers.ModelSerializer):
         fields = ("brand",)
 
 
+class ImageSerializer(serializers.ModelSerializer):
+    """Сериализация изображений."""
+
+    image = Base64ImageField(
+        required=True,
+    )
+
+    class Meta:
+        fields = (
+            "id",
+            "image",
+            "main_image",
+            "description_image",
+        )
+        model = ImageMachinery
+
+        
 class MachineryInfoSerializer(serializers.ModelSerializer):
     """Сериализация информации о технике."""
 
     category = serializers.SerializerMethodField()
     mark = MachineryBrandnameSerializer(read_only=True)
+    images = ImageSerializer(
+        read_only=True,
+        many=True,
+        source="images_machinery",
+    )
 
     class Meta:
         fields = (
             "mark",
             "name",
+            "images",
             "category",
             "description",
             "attachments_available",
@@ -38,6 +63,7 @@ class MachinerySerializer(serializers.ModelSerializer):
     """Сериализация техники."""
 
     machinery = MachineryInfoSerializer(read_only=True)
+    is_favorited = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         fields = (
@@ -49,6 +75,13 @@ class MachinerySerializer(serializers.ModelSerializer):
             "delivery_distance_km",
             "delivery_cost",
             "rental_price",
+            "is_favorited",
             "machinery",
         )
         model = Machinery
+
+    def get_is_favorited(self, obj):
+        request = self.context.get("request")
+        if request.user.is_anonymous:
+            return False
+        return obj.favorite.filter(user=request.user).exists()

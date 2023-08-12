@@ -109,6 +109,35 @@ class Machinery(models.Model):
         verbose_name_plural = "Карточки техники"
 
 
+class ImageMachinery(models.Model):
+    """
+    Изображения техники.
+    """
+
+    description_image = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+    image = models.ImageField(
+        upload_to="machinery_image/",
+    )
+    main_image = models.BooleanField(
+        default=False,
+    )
+    machinery = models.ForeignKey(
+        MachineryInfo,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self) -> str:
+        return f"{self.machinery.machineries.name} {self.description_image}"
+
+    class Meta:
+        verbose_name = "Изображение"
+        verbose_name_plural = "Изображения"
+        default_related_name = "images_machinery"
+
+
 class Favorite(models.Model):
     """
     Избранная пользователем техника.
@@ -137,4 +166,4 @@ class Favorite(models.Model):
         ]
 
     def __str__(self) -> str:
-        return f"{self.user} добавил {self.machinery.name}"
+        return f"{self.user} добавил {self.machinery.machinery.name}"

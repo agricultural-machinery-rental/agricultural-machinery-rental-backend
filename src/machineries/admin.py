@@ -5,6 +5,7 @@ from machineries.models import (
     Machinery,
     MachineryInfo,
     MachineryBrandname,
+    ImageMachinery,
 )
 
 
@@ -16,6 +17,11 @@ class AdminMachinery(admin.ModelAdmin):
 @admin.register(MachineryInfo)
 class AdminMachineryInfo(admin.ModelAdmin):
     list_display = ("id", "name")
+
+
+@admin.register(ImageMachinery)
+class AdminImageMachinery(admin.ModelAdmin):
+    list_display = ("id",)
 
 
 @admin.register(Favorite)
