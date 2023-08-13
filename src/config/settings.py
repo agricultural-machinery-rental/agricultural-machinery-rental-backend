@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "phonenumber_field",
     "django_filters",
+    "django_rest_passwordreset",
     "django_cleanup.apps.CleanupConfig",
 ]
 
@@ -45,11 +46,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
-
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATES_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -125,3 +126,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+if os.getenv("EMAIL_FILE") == "YES":
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_USE_TLS = True if os.getenv("EMAIL_USE_TLS") == "YES" else False
+    EMAIL_PORT = os.getenv("EMAIL_PORT")
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@server.com")

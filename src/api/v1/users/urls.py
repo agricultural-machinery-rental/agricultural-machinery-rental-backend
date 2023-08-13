@@ -9,6 +9,10 @@ router.register("", views.UserViewSet)
 
 urlpatterns = [
     path("change-password/", views.set_password),
+    path(
+        "password_reset/",
+        include("django_rest_passwordreset.urls", namespace="password_reset"),
+    ),
     path("token/refresh/", TokenRefreshView.as_view()),
     path("token/", views.MyTokenObtainPairView.as_view()),
     path("callback", views.CallbackList.as_view()),
