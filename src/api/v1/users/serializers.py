@@ -13,12 +13,16 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "email",
             "first_name",
             "last_name",
             "patronymic",
             "phone_number",
             "role",
+            "organization_name",
+            "inn",
+            "birthday",
         )
 
 
@@ -36,6 +40,11 @@ class CreateUserSerializer(ModelSerializer):
     phone_number = PhoneNumberField(
         validators=[UniqueValidator(queryset=User.objects.all())]
     )
+    organization_name = serializers.CharField(
+        max_length=Limits.MAX_LENGTH_NAME_ORGANIZATION,
+        allow_null=True,
+        default=None,
+    )
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -46,11 +55,25 @@ class CreateUserSerializer(ModelSerializer):
             "last_name",
             "patronymic",
             "phone_number",
+            "organization_name",
+            "inn",
+            "birthday",
             "password",
         )
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+    def validate(self, data):
+        if self.context["request"].method != "POST":
+            if data.get("password"):
+                data.pop("password")
+        inn = data.get("inn")
+        if inn is None:
+            return data
+        if not inn.isdigit():
+            raise serializers.ValidationError({"inn": "Неверный формат ИНН"})
+        return data
 
 
 class ChangePasswordSerializer(Serializer):
@@ -98,3 +121,7 @@ class CallbackSerializer(serializers.ModelSerializer):
             "phone_number",
             "comment",
         )
+
+
+class ResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)

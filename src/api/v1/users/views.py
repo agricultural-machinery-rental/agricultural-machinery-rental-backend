@@ -1,11 +1,11 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions, status, mixins, viewsets
+from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.users import serializers
-from api.v1.users.permissions import NicePerson
+from api.v1.users.permissions import OwnerOrAdminPermission, OwnerPermission
 from users.models import Callback
 
 User = get_user_model()
@@ -25,14 +25,14 @@ class UserViewSet(NotListViewSet):
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        if self.action == "create":
+        if self.action in ["create", "partial_update"]:
             return serializers.CreateUserSerializer
         return serializers.UserSerializer
 
     def get_permissions(self):
         if self.action == "create":
             return [permissions.AllowAny()]
-        return [NicePerson()]
+        return [OwnerOrAdminPermission()]
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -40,7 +40,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 
 @api_view(["POST"])
-@permission_classes([NicePerson])
+@permission_classes([OwnerPermission])
 def set_password(request):
     data = request.data
     data["user"] = request.user
