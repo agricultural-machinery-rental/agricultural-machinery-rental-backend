@@ -11,14 +11,19 @@ class AdminReservation(admin.ModelAdmin):
         "renter",
         "start_date",
         "end_date",
-        "status",
+    )
+    search_fields = (
+        'renter__first_name',
+        'start_date',
+        'end_date',
+        'machinary__machinary__name'
     )
 
 
 @admin.register(ReservationStatus)
-class AdminReservationStatus(admin.ModelAdmin):
+class ReservationStatus(admin.ModelAdmin):
     list_display = (
-        "id",
-        "name",
-        "time_update",
+        "reservation",
+        "status"
     )
+    search_fields = ('status__name',)

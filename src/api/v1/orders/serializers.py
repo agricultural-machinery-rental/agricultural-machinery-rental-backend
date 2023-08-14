@@ -5,7 +5,16 @@ from rest_framework import serializers
 from api.v1.users.serializers import UserSerializer
 from core.choices_classes import ReservationStatusOptions
 from machineries.models import Machinery
-from orders.models import Reservation, ReservationStatus
+from orders.models import Reservation, ReservationStatus, Status
+
+
+class StatusSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для статусов заказов.
+    """
+    class Meta:
+        model = Status
+        fields = ("name", "description")
 
 
 class ReservationStatusSerializer(serializers.ModelSerializer):
@@ -22,13 +31,11 @@ class CreateReservationSerializer(serializers.ModelSerializer):
     machinery = serializers.PrimaryKeyRelatedField(
         queryset=Machinery.objects.all(),
     )
-    renter = UserSerializer(read_only=True)
 
     class Meta:
         fields = (
-            "id",
+            "number",
             "machinery",
-            "renter",
             "start_date",
             "end_date",
             "comment",
@@ -36,17 +43,13 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         model = Reservation
 
     def create(self, validated_data):
-        current_user = self.context["request"].user
-        machinery = validated_data["machinery"]
-        self.validate(validated_data)
-
-        status = ReservationStatus.objects.create(
-            name=ReservationStatusOptions.CREATED
+        machinery = get_object_or_404(
+            Machinery,
+            pk=validated_data["machinery"]
         )
+        self.validate(validated_data)
         reservation = Reservation.objects.create(
             machinery_id=machinery.id,
-            renter=current_user,
-            status=status,
             **validated_data
         )
         return reservation
@@ -79,15 +82,17 @@ class CreateReservationSerializer(serializers.ModelSerializer):
 class ReadReservationSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра резервирований."""
 
-    status = ReservationStatusSerializer()
+    status = ReservationStatusSerializer(read_only=True, many=True)
+    renter = UserSerializer(read_only=True)
 
     class Meta:
+        model = Reservation
         fields = (
             "id",
+            "number",
             "machinery",
             "renter",
             "start_date",
             "end_date",
             "status",
         )
-        model = Reservation
