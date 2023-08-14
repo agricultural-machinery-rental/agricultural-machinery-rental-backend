@@ -89,6 +89,9 @@ class Machinery(models.Model):
         verbose_name = "Карточка техники"
         verbose_name_plural = "Карточки техники"
 
+    def __str__(self):
+        return f"{self.machinery.name} - {self.location} ({self.year_of_manufacture})"
+
 
 class ImageMachinery(models.Model):
     """
