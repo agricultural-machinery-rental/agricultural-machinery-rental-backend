@@ -12,9 +12,7 @@ if os.path.exists(dotenv_path):
 
 SECRET_KEY = os.getenv("SECRET_KEY", "40r-my-5&cr&+k#y")
 DEBUG = True if os.getenv("DEBUG") == "YES" else False
-ALLOWED_HOSTS = [
-    os.getenv("ALLOWED_HOSTS"),
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(", ")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -30,6 +28,8 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
+    "django_rest_passwordreset",
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
@@ -43,11 +43,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "config.urls"
-
+TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATES_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -102,13 +102,17 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -119,3 +123,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+if os.getenv("EMAIL_FILE") == "YES":
+    EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+else:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_USE_TLS = True if os.getenv("EMAIL_USE_TLS") == "YES" else False
+    EMAIL_PORT = os.getenv("EMAIL_PORT")
+    EMAIL_HOST = os.getenv("EMAIL_HOST")
+    EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@server.com")
