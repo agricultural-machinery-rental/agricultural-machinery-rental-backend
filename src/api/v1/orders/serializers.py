@@ -1,4 +1,3 @@
-from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -12,6 +11,7 @@ class StatusSerializer(serializers.ModelSerializer):
     """
     Сериализатор для статусов заказов.
     """
+
     class Meta:
         model = Status
         fields = ("name", "description")
@@ -20,8 +20,10 @@ class StatusSerializer(serializers.ModelSerializer):
 class ReservationStatusSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра и изменения статусов резервирования."""
 
+    status = StatusSerializer(read_only=True)
+
     class Meta:
-        fields = ("id", "name", "time_update")
+        fields = ("status", "time_update")
         model = ReservationStatus
 
 
@@ -43,14 +45,10 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         model = Reservation
 
     def create(self, validated_data):
-        machinery = get_object_or_404(
-            Machinery,
-            pk=validated_data["machinery"]
-        )
+        machinery = validated_data["machinery"]
         self.validate(validated_data)
         reservation = Reservation.objects.create(
-            machinery_id=machinery.id,
-            **validated_data
+            machinery_id=machinery.id, **validated_data
         )
         return reservation
 
@@ -60,7 +58,6 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         return instance
 
     def validate(self, data):
-
         if data.get("start_date") < timezone.now():
             raise serializers.ValidationError("Выбранная дата уже прошла.")
         if data.get("end_date") < data.get("start_date"):
@@ -82,7 +79,9 @@ class CreateReservationSerializer(serializers.ModelSerializer):
 class ReadReservationSerializer(serializers.ModelSerializer):
     """Сериализатор для просмотра резервирований."""
 
-    status = ReservationStatusSerializer(read_only=True, many=True)
+    status = ReservationStatusSerializer(
+        read_only=True, many=True, source="reservation_status"
+    )
     renter = UserSerializer(read_only=True)
 
     class Meta:

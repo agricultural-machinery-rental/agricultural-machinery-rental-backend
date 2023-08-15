@@ -1,224 +1,491 @@
-openapi: 3.0.3
+swagger: '2.0'
 info:
-  title: API Агропарк
-  version: "1.0"
-  description: |
-    Open API сервиса **Агропарк** - Аренда сельскохозяйственной техники 
+  title: AgroBooking API
+  description:  Open API сервиса **Агропарк** - Аренда сельскохозяйственной техники
     [Agricultural Machinery Rental - AMR]
-
-servers:
-  - url: /api/v1/
-
-tags:
-  - name: AUTH
-    description: Регистрация пользователей и выдача токенов.
-
+  license:
+    name: BSD License
+  version: v1
+host: 127.0.0.1:8000
+schemes:
+- http
+basePath: /api/v1
+consumes:
+- application/json
+produces:
+- application/json
+securityDefinitions:
+  Basic:
+    type: basic
+security:
+- Basic: []
 paths:
-  /auth/signup/:
-    post:
-      tags:
-        - AUTH
-      summary: Регистрация нового пользователя.
-      description: |
-        Права доступа: **Доступно без токена.**
-
-        Поля `username` и `email` должны быть уникальными.
-        
-        - Поле `username`: от 5 до 10 буквенно-цифровых символов, разрешены 
-        символы подчеркивания и точка. Буквы только латинского алфавита.
-        - Поле `full_name`: от 2 символов. Не разрешаны спецсимволы и цифры.
-        - Поле `password`: от 6 до 25 символов. Специальные требования (одна 
-        заглавная, одна строчная буквы, одна цифра).
-        
-        Все поля обязательные.
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/NewUser"
-
+  /machineries/:
+    get:
+      operationId: machineries_list
+      description: |-
+        Вьюсет для техники.
+        Обрабатываемые запросы: GET (list&detail).
+        Эндпоинты: /machineries/
+      parameters: []
       responses:
-        201:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-          description: Пользователь зарегистрирован.
-        400:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationError"
-          description: Ошибки валидации. Отсутствует обязательное поле или оно некорректно.
-
-  /auth/token/:
-    post:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Machinery'
       tags:
-        - AUTH
-      summary: Получение токена.
-      description: |
-        Права доступа: **Доступно без токена.**
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/getTokenUser"
-
+      - machineries
+    parameters: []
+  /machineries/{id}/:
+    get:
+      operationId: machineries_read
+      description: |-
+        Вьюсет для техники.
+        Обрабатываемые запросы: GET (list&detail).
+        Эндпоинты: /machineries/
+      parameters: []
       responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TokenRefresh"
-          description: Удачное выполнение запроса
-        400:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationError"
-          description: Отсутствует обязательное поле или оно некорректно
-        404:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
-          description: Пользователь не найден
-
-  /auth/token/refresh/:
-    post:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/Machinery'
       tags:
-        - AUTH
-      summary: Обновление токена.
-      description: |
-        Права доступа: **Доступно без токена.**
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/getRefreshToken"
+      - machineries
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this Карточка техники.
+      required: true
+      type: integer
+  /machineries/{id}/favorite/:
+    post:
+      operationId: machineries_favorite_create
+      description: |-
+        Вьюсет для техники.
+        Обрабатываемые запросы: GET (list&detail).
+        Эндпоинты: /machineries/
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Machinery'
       responses:
-        200:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Token"
-          description: Удачное выполнение запроса
-        400:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ValidationError"
-          description: Отсутствует обязательное поле или оно некорректно
-        404:
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
-          description: Пользователь не найден
-
-components:
-  schemas:
-    NewUser:
-      title: Регистрируемый пользователь
-      type: object
-      required:
-        - username
-        - full_name
-        - email
-        - password
-      properties:
-        username:
-          type: string
-          minLength: 5
-          maxLength: 10
-          description: "login пользователя"
-        full_name:
-          type: string
-          minLength: 2
-          description: "Фамилия и имя пользователя"
-        email:
-          format: email
-          type: string
-          description: "Адрес электронной почты"
-        password:
-          type: string
-          minLength: 6
-          maxLength: 25
-          description: "Пароль пользователя"
-      example: { "username": "ipoop", "full_name": "Пупкин Иван",
-        "email":
-          "ivan.pupkin@mail.ru", "password": "sUPPerPA$$" }
-
-    User:
-      title: Пользователь
-      type: object
-      properties:
-        username:
-          type: string
-          description: "login пользователя"
-      example: { "username": "ipoop" }
-
-    getTokenUser:
-      title: Запрос токена
-      type: object
-      required:
-        - username
-        - password
-      properties:
-        username:
-          type: string
-          description: "login пользователя"
-        password:
-          type: string
-          description: "Пароль пользователя"
-      example: { "username": "ipoop", "password": "sUPPerPA$$" }
-
-    getRefreshToken:
-      title: Запрос на обновление токена
-      type: object
-      required:
-        - refresh
-      properties:
-        refresh:
-          type: string
-          description: "полученный раннее refresh пользователя"
-      example: { "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
-
-    Token:
-      title: Токен
-      type: object
-      properties:
-        access:
-          type: string
-          description: "Токен"
-      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg" }
-
-    TokenRefresh:
-      title: Токен и обновление
-      type: object
-      properties:
-        access:
-          type: string
-          description: "Токен"
-        refresh:
-          type: string
-          description: "Обновление токена"
-      example: { "access": "eyJ0eXA...MdTwUnGP3LjRn5g8EIvWlVg", "refresh": "eyJ0eXAiOiJK...FlO6AShlfeINK8nA" }
-
-    ValidationError:
-      title: Ошибка валидации
-      type: object
-      properties:
-        field_name:
-          type: array
-          items:
-            type: string
-
-    NotFound:
-      description: Объект не найден
-      type: object
-      properties:
-        detail:
-          description: 'Описание ошибки'
-          example: "Страница не найдена."
-          type: string
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Machinery'
+      tags:
+      - machineries
+    delete:
+      operationId: machineries_favorite_delete
+      description: |-
+        Вьюсет для техники.
+        Обрабатываемые запросы: GET (list&detail).
+        Эндпоинты: /machineries/
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - machineries
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this Карточка техники.
+      required: true
+      type: integer
+  /orders/:
+    get:
+      operationId: orders_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+      - orders
+    parameters: []
+  /users/:
+    post:
+      operationId: users_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/CreateUser'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CreateUser'
+      tags:
+      - users
+    parameters: []
+  /users/callback:
+    post:
+      operationId: users_callback_create
+      description: |-
+        Дженерик для Обратного звонка.
+        Обрабатывает только POST запрос.
+        Доступен неавторизованным пользователям.
+        Эндпоинт users/callback.
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Callback'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Callback'
+      tags:
+      - users
+    parameters: []
+  /users/change-password/:
+    post:
+      operationId: users_change-password_create
+      description: ''
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+      - users
+    parameters: []
+  /users/token/:
+    post:
+      operationId: users_token_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/CustomTokenObtainPair'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/CustomTokenObtainPair'
+      tags:
+      - users
+    parameters: []
+  /users/token/refresh/:
+    post:
+      operationId: users_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/TokenRefresh'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/TokenRefresh'
+      tags:
+      - users
+    parameters: []
+  /users/{id}/:
+    get:
+      operationId: users_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+      - users
+    put:
+      operationId: users_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+      - users
+    patch:
+      operationId: users_partial_update
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/User'
+      tags:
+      - users
+    delete:
+      operationId: users_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - users
+    parameters:
+    - name: id
+      in: path
+      description: A unique integer value identifying this Пользователь.
+      required: true
+      type: integer
+definitions:
+  Image:
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      image:
+        title: Image
+        type: string
+        readOnly: true
+        format: uri
+      main_image:
+        title: Main image
+        type: boolean
+      description_image:
+        title: Description image
+        type: string
+        maxLength: 100
+  MachineryInfo:
+    required:
+    - name
+    - description
+    - attachments_available
+    - power_hp
+    - payload_capacity_kg
+    type: object
+    properties:
+      name:
+        title: Название техники
+        type: string
+        maxLength: 100
+        minLength: 1
+      images:
+        type: array
+        items:
+          $ref: '#/definitions/Image'
+        readOnly: true
+      category:
+        title: Category
+        type: string
+        readOnly: true
+      description:
+        title: Описание техники
+        type: string
+        minLength: 1
+      attachments_available:
+        title: Возможность навесного оборудования
+        type: boolean
+      power_hp:
+        title: Мощность, л.с.
+        type: integer
+        maximum: 32767
+        minimum: 0
+      payload_capacity_kg:
+        title: Грузоподъемность, кг
+        type: integer
+        maximum: 32767
+        minimum: 0
+  Machinery:
+    required:
+    - year_of_manufacture
+    - location
+    - mileage
+    - delivery_distance_km
+    - delivery_cost
+    - rental_price
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      year_of_manufacture:
+        title: Год выпуска
+        type: integer
+        maximum: 32767
+        minimum: 0
+      available:
+        title: Доступность
+        type: boolean
+      location:
+        title: Местонахождение
+        type: string
+        maxLength: 100
+        minLength: 1
+      mileage:
+        title: Пробег
+        type: integer
+        maximum: 32767
+        minimum: 0
+      delivery_distance_km:
+        title: Дистанция доставки, км
+        type: integer
+        maximum: 32767
+        minimum: 0
+      delivery_cost:
+        title: Стоимость доставки
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+      rental_price:
+        title: Стоимость аренды
+        type: integer
+        maximum: 2147483647
+        minimum: 0
+      is_favorited:
+        title: Is favorited
+        type: string
+        readOnly: true
+      machinery:
+        $ref: '#/definitions/MachineryInfo'
+  CreateUser:
+    required:
+    - email
+    - first_name
+    - last_name
+    - phone_number
+    - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        maxLength: 50
+        minLength: 1
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 50
+        minLength: 1
+      patronymic:
+        title: Patronymic
+        type: string
+        maxLength: 50
+      phone_number:
+        title: Phone number
+        type: string
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  Callback:
+    required:
+    - phone_number
+    type: object
+    properties:
+      phone_number:
+        title: Номер телефона
+        type: string
+        maxLength: 15
+        minLength: 1
+      comment:
+        title: Комментарий
+        type: string
+        maxLength: 250
+        x-nullable: true
+  CustomTokenObtainPair:
+    required:
+    - password
+    - email_or_phone
+    type: object
+    properties:
+      password:
+        title: Password
+        type: string
+        minLength: 1
+      email_or_phone:
+        title: Email or phone
+        type: string
+        minLength: 1
+  TokenRefresh:
+    required:
+    - refresh
+    type: object
+    properties:
+      refresh:
+        title: Refresh
+        type: string
+        minLength: 1
+      access:
+        title: Access
+        type: string
+        readOnly: true
+        minLength: 1
+  User:
+    required:
+    - email
+    - first_name
+    - last_name
+    - phone_number
+    type: object
+    properties:
+      email:
+        title: Адрес электронной почты
+        type: string
+        format: email
+        maxLength: 254
+        minLength: 1
+      first_name:
+        title: Имя
+        type: string
+        maxLength: 50
+        minLength: 1
+      last_name:
+        title: Фамилия
+        type: string
+        maxLength: 50
+        minLength: 1
+      patronymic:
+        title: Отчество
+        type: string
+        maxLength: 50
+        x-nullable: true
+      phone_number:
+        title: Номер телефона
+        type: string
+        maxLength: 15
+        minLength: 1
+      role:
+        title: Роль
+        type: integer
+        enum:
+        - 1
+        - 2
+        - 3

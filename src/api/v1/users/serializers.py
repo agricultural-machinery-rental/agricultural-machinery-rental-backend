@@ -10,6 +10,11 @@ from users.models import Callback, User
 
 
 class UserSerializer(ModelSerializer):
+    role = serializers.CharField(
+        source="get_role_display",
+        read_only=True,
+    )
+
     class Meta:
         model = User
         fields = (
@@ -27,6 +32,7 @@ class UserSerializer(ModelSerializer):
 
 
 class CreateUserSerializer(ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())],
     )
@@ -50,6 +56,7 @@ class CreateUserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "email",
             "first_name",
             "last_name",

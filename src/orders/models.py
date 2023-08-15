@@ -21,10 +21,7 @@ class Status(models.Model):
         choices=ReservationStatusOptions.choices,
         default=ReservationStatusOptions.CREATED,
     )
-    description = models.CharField(
-        "Описание статуса",
-        max_length=150
-    )
+    description = models.CharField("Описание статуса", max_length=150)
 
     class Meta:
         verbose_name = "Статус резервирования"
@@ -38,11 +35,9 @@ class Reservation(models.Model):
     """
     Описание модели резервирования техники.
     """
+
     # ToDo Описать логику формирования номера заказа.
-    number = models.CharField(
-        "Номер заказа",
-        max_length=30
-    )
+    number = models.CharField("Номер заказа", max_length=30)
     machinery = models.ForeignKey(
         Machinery,
         verbose_name="Техника",
@@ -65,7 +60,7 @@ class Reservation(models.Model):
         Status,
         verbose_name="Статусы резервирования",
         related_name="reservations",
-        through="ReservationStatus"
+        through="ReservationStatus",
     )
     comment = models.TextField(
         "Комментарий к резервированию",
@@ -88,6 +83,7 @@ class ReservationStatus(models.Model):
     """
     Модель для истории изменения статусов заказов.
     """
+
     status = models.ForeignKey(
         Status,
         on_delete=models.CASCADE,
@@ -97,7 +93,7 @@ class ReservationStatus(models.Model):
         Reservation,
         on_delete=models.CASCADE,
         verbose_name="Заказ",
-        related_name="reservation_status"
+        related_name="reservation_status",
     )
     time_update = models.DateTimeField(
         "Дата изменения статуса",
@@ -118,7 +114,4 @@ class ReservationStatus(models.Model):
 def create_status(sender, instance, created, **kwargs):
     if created:
         status = get_object_or_404(Status, name=0)
-        ReservationStatus.objects.create(
-            status=status,
-            reservation=instance
-        )
+        ReservationStatus.objects.create(status=status, reservation=instance)
