@@ -128,12 +128,12 @@ class ImageMachinery(models.Model):
         default=False,
     )
     machinery = models.ForeignKey(
-        MachineryInfo,
+        Machinery,
         on_delete=models.CASCADE,
     )
 
     def __str__(self) -> str:
-        return f"{self.machinery.machineries.name} {self.description_image}"
+        return f"{self.machinery.machinery.name} {self.description_image}"
 
     class Meta:
         verbose_name = "Изображение"

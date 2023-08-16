@@ -41,17 +41,11 @@ class MachineryInfoSerializer(serializers.ModelSerializer):
 
     category = serializers.SerializerMethodField()
     mark = MachineryBrandnameSerializer(read_only=True)
-    images = ImageSerializer(
-        read_only=True,
-        many=True,
-        source="images_machinery",
-    )
 
     class Meta:
         fields = (
             "mark",
             "name",
-            "images",
             "category",
             "description",
             "attachments_available",
@@ -69,6 +63,11 @@ class MachinerySerializer(serializers.ModelSerializer):
 
     machinery = MachineryInfoSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
+    images = ImageSerializer(
+        read_only=True,
+        many=True,
+        source="images_machinery",
+    )
 
     class Meta:
         fields = (
@@ -82,6 +81,7 @@ class MachinerySerializer(serializers.ModelSerializer):
             "rental_price",
             "is_favorited",
             "machinery",
+            "images",
         )
         model = Machinery
 
