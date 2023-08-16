@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -10,6 +11,11 @@ from api.v1.machineries.serializers import MachinerySerializer
 from machineries.models import Favorite, Machinery
 
 
+@extend_schema(tags=["Machinery"])
+@extend_schema_view(
+    list=extend_schema(summary="Список техники"),
+    retrieve=extend_schema(summary="Конкретная техника"),
+)
 class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Вьюсет для техники.
@@ -31,6 +37,8 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         "machinery__name",
     )
 
+    @extend_schema(summary="Отметить как избранное", methods=["POST"])
+    @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
     @action(
         detail=True,
         methods=("post", "delete"),

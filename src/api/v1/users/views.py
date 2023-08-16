@@ -1,4 +1,9 @@
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import (
+    extend_schema,
+    extend_schema_view,
+    OpenApiExample,
+)
 from rest_framework import generics, mixins, permissions, status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -21,6 +26,43 @@ class NotListViewSet(
     pass
 
 
+@extend_schema(tags=["Users"])
+@extend_schema_view(
+    create=extend_schema(
+        summary="Создание нового пользователя",
+        examples=[
+            OpenApiExample(
+                "Пример создания пользователя",
+                value={
+                    "email": "user@example.com",
+                    "first_name": "Иван",
+                    "last_name": "Иванов",
+                    "phone_number": "+79451234567",
+                    "password": "superPuper",
+                },
+                status_codes=[str(status.HTTP_201_CREATED)],
+            ),
+        ],
+    ),
+    retrieve=extend_schema(summary="Конкретный пользователь"),
+    update=extend_schema(summary="Изменение данных пользователя"),
+    partial_update=extend_schema(
+        summary="Изменение данных пользователя",
+        examples=[
+            OpenApiExample(
+                "Пример изменения данных пользователя",
+                value={
+                    "first_name": "Пётр",
+                    "last_name": "Иванов",
+                    "organization_name": "AMR",
+                    "inn": "123456789112",
+                },
+                status_codes=[str(status.HTTP_200_OK)],
+            ),
+        ],
+    ),
+    destroy=extend_schema(summary="Удаление пользователя"),
+)
 class UserViewSet(NotListViewSet):
     queryset = User.objects.all()
 
@@ -35,10 +77,43 @@ class UserViewSet(NotListViewSet):
         return [OwnerOrAdminPermission()]
 
 
+@extend_schema(
+    tags=["Users"],
+    summary="Получить токен пользователя",
+    description=(
+        "Получить токен пользователя можно указав почту или номер "
+        "телефона и пароль"
+    ),
+    examples=[
+        OpenApiExample(
+            "Пример получения токена",
+            value={
+                "email_or_phone": "user@example.com",
+                "password": "superPuper",
+            },
+            status_codes=[str(status.HTTP_200_OK)],
+        ),
+    ],
+)
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = serializers.CustomTokenObtainPairSerializer
 
 
+@extend_schema(
+    tags=["Users"],
+    summary="Изменить пароль пользователя",
+    request=serializers.ChangePasswordSerializer,
+    examples=[
+        OpenApiExample(
+            "Пример изменения пароля пользователя",
+            value={
+                "current_password": "superPuper",
+                "new_password": "superPuper2",
+            },
+            status_codes=[str(status.HTTP_204_NO_CONTENT)],
+        ),
+    ],
+)
 @api_view(["POST"])
 @permission_classes([OwnerPermission])
 def set_password(request):
@@ -53,6 +128,7 @@ def set_password(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+@extend_schema(tags=["Callback"], summary="Обратный звонок")
 class CallbackList(generics.CreateAPIView):
     """
     Дженерик для Обратного звонка.

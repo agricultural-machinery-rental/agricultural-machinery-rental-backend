@@ -12,9 +12,7 @@ if os.path.exists(dotenv_path):
 
 SECRET_KEY = os.getenv("SECRET_KEY", "40r-my-5&cr&+k#y")
 DEBUG = True if os.getenv("DEBUG") == "YES" else False
-ALLOWED_HOSTS = [
-    os.getenv("ALLOWED_HOSTS"),
-]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(", ")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -33,6 +31,7 @@ INSTALLED_APPS = [
     "django_filters",
     "django_rest_passwordreset",
     "django_cleanup.apps.CleanupConfig",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -120,6 +119,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
@@ -137,3 +137,17 @@ else:
     EMAIL_HOST = os.getenv("EMAIL_HOST")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@server.com")
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "AgroParkBooking API",
+    "DESCRIPTION": (
+        "Open API сервиса **Агропарк** - Аренда "
+        "сельскохозяйственной техники [Agricultural Machinery "
+        "Rental - AMR]"
+    ),
+    "VERSION": "1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "filter": True,  # включить поиск по тегам
+    },
+}
