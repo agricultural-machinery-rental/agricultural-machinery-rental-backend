@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "orders.apps.OrdersConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
+    "django_filters",
     "django_rest_passwordreset",
     "django_cleanup.apps.CleanupConfig",
     "drf_spectacular",
