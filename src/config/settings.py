@@ -12,7 +12,8 @@ if os.path.exists(dotenv_path):
 
 SECRET_KEY = os.getenv("SECRET_KEY", "40r-my-5&cr&+k#y")
 DEBUG = True if os.getenv("DEBUG") == "YES" else False
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(", ")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "http://127.0.0.1").split(", ")
+CSRF_TRUSTED_ORIGINS = [os.getenv("ALLOWED_HOSTS", "http://127.0.0.1")]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -127,7 +128,8 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-if os.getenv("EMAIL_FILE") == "YES":
+EMAIL_FILE = True if os.getenv("EMAIL_FILE") == "YES" else False
+if EMAIL_FILE:
     EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
 else:
@@ -137,6 +139,11 @@ else:
     EMAIL_HOST = os.getenv("EMAIL_HOST")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "noreply@server.com")
+
+TRANSFER = True if os.getenv("TRANSFER") == "YES" else False
+if TRANSFER:
+    TRANSFER_SERVER = os.getenv("TRANSFER_SERVER")
+    TRANSFER_TOKEN = os.getenv("TRANSFER_TOKEN")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "AgroParkBooking API",
