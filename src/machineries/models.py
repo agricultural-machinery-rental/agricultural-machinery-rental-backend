@@ -23,6 +23,7 @@ class MachineryInfo(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Марка техники",
         related_name="brandname",
+        null=True,
     )
     name = models.CharField(
         verbose_name="Модель техники",

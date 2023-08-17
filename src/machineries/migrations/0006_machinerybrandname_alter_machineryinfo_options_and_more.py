@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
             name="mark",
             field=models.ForeignKey(
                 default=None,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="brandname",
                 to="machineries.machinerybrandname",
