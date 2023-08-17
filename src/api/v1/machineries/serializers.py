@@ -2,7 +2,21 @@ from rest_framework import serializers
 
 from api.v1.machineries.fields import Base64ImageField
 from core.choices_classes import Category
-from machineries.models import Machinery, MachineryInfo, ImageMachinery
+
+from machineries.models import (
+    ImageMachinery,
+    Machinery,
+    MachineryInfo,
+    MachineryBrandname,
+)
+
+
+class MachineryBrandnameSerializer(serializers.ModelSerializer):
+    """Сериализация информации о Марке техники"""
+
+    class Meta:
+        model = MachineryBrandname
+        fields = ("brand",)
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -26,16 +40,12 @@ class MachineryInfoSerializer(serializers.ModelSerializer):
     """Сериализация информации о технике."""
 
     category = serializers.SerializerMethodField()
-    images = ImageSerializer(
-        read_only=True,
-        many=True,
-        source="images_machinery",
-    )
+    mark = MachineryBrandnameSerializer(read_only=True)
 
     class Meta:
         fields = (
+            "mark",
             "name",
-            "images",
             "category",
             "description",
             "attachments_available",
@@ -53,6 +63,11 @@ class MachinerySerializer(serializers.ModelSerializer):
 
     machinery = MachineryInfoSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
+    images = ImageSerializer(
+        read_only=True,
+        many=True,
+        source="images_machinery",
+    )
 
     class Meta:
         fields = (
@@ -66,6 +81,7 @@ class MachinerySerializer(serializers.ModelSerializer):
             "rental_price",
             "is_favorited",
             "machinery",
+            "images",
         )
         model = Machinery
 
