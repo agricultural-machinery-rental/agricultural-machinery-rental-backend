@@ -3,7 +3,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase, APIClient
 
 from machineries.models import Machinery, MachineryInfo
-from orders.models import Reservation, Status
+from orders.models import Reservation, ReservationStatus, Status
 from users.models import User
 
 
@@ -112,4 +112,24 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
             renter=cls.user,
             start_date=timezone.now() + timedelta(minutes=1),
             end_date=timezone.now() + timedelta(hours=24),
+        )
+        cls.reservation2 = Reservation.objects.create(
+            number="10",
+            machinery=cls.machinary_2,
+            renter=cls.user,
+            start_date="2123-08-16T11:33:16.029352+03:00",
+            end_date="2123-08-17T11:32:16.029352+03:00",
+        )
+        cls.reservation2_status = ReservationStatus.objects.create(
+            status=cls.status_finished, reservation=cls.reservation2
+        )
+        cls.reservation3 = Reservation.objects.create(
+            number="10",
+            machinery=cls.machinary_2,
+            renter=cls.user,
+            start_date="2123-08-18T11:33:16.029352+03:00",
+            end_date="2123-08-18T12:32:16.029352+03:00",
+        )
+        cls.reservation3_status = ReservationStatus.objects.create(
+            status=cls.status_cancelled, reservation=cls.reservation3
         )

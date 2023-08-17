@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import serializers
 
@@ -68,7 +69,17 @@ class CreateReservationSerializer(serializers.ModelSerializer):
             machinery=data.get("machinery"),
             start_date__lte=data.get("end_date"),
             end_date__gte=data.get("start_date"),
-        ).exclude(status__name=ReservationStatusOptions.CANCELLED)
+        ).exclude(
+            Q(status__name=ReservationStatusOptions.CANCELLED)
+            | Q(status__name=ReservationStatusOptions.FINISHED)
+        )
+        if self.context["request"].method == "PUT":
+            instance_id = (
+                self.context["request"].parser_context.get("kwargs").get("pk")
+            )
+            existing_reservations = existing_reservations.exclude(
+                id=instance_id
+            )
 
         if existing_reservations.exists():
             raise serializers.ValidationError("Выбранные даты уже заняты.")
@@ -94,4 +105,5 @@ class ReadReservationSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "status",
+            "comment",
         )

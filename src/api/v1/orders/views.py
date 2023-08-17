@@ -26,11 +26,14 @@ class ReservationViewSet(
         return Reservation.objects.filter(renter=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method in ("POST", "PATCH"):
+        if self.action in ("create", "update"):
             return CreateReservationSerializer
         return ReadReservationSerializer
 
     def perform_create(self, serializer):
+        serializer.save(renter=self.request.user)
+
+    def perform_update(self, serializer):
         serializer.save(renter=self.request.user)
 
 

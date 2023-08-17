@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from orders.models import Reservation, ReservationStatus
+from orders.models import Reservation, ReservationStatus, Status
 
 
 @admin.register(Reservation)
@@ -21,6 +21,11 @@ class AdminReservation(admin.ModelAdmin):
 
 
 @admin.register(ReservationStatus)
-class ReservationStatus(admin.ModelAdmin):
+class AdminReservationStatus(admin.ModelAdmin):
     list_display = ("reservation", "status")
     search_fields = ("status__name",)
+
+
+@admin.register(Status)
+class AdminStatus(admin.ModelAdmin):
+    list_display = ("name", "description")
