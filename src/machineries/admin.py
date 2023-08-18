@@ -15,8 +15,8 @@ class AdminMachinery(admin.ModelAdmin):
         "id",
         "machinery",
         "year_of_manufacture",
-        "available",
         "location",
+        "available",
     )
 
 
