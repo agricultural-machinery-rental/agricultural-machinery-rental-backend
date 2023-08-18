@@ -37,7 +37,7 @@ class Reservation(models.Model):
     """
 
     # ToDo Описать логику формирования номера заказа.
-    number = models.CharField("Номер заказа", max_length=30)
+    number = models.CharField("Номер заказа", max_length=30, default=1)
     machinery = models.ForeignKey(
         Machinery,
         verbose_name="Техника",
@@ -49,12 +49,15 @@ class Reservation(models.Model):
         verbose_name="Арендатор",
         on_delete=models.CASCADE,
         related_name="reservations",
+        null=True,
     )
     start_date = models.DateTimeField(
         "Время начала резервирования",
+        null=True,
     )
     end_date = models.DateTimeField(
         "Время окончания резервирования",
+        null=True,
     )
     status = models.ManyToManyField(
         Status,
@@ -88,12 +91,14 @@ class ReservationStatus(models.Model):
         Status,
         on_delete=models.CASCADE,
         verbose_name="Статус заказа",
+        null=True,
     )
     reservation = models.ForeignKey(
         Reservation,
         on_delete=models.CASCADE,
         verbose_name="Заказ",
         related_name="reservation_status",
+        null=True,
     )
     time_update = models.DateTimeField(
         "Дата изменения статуса",
