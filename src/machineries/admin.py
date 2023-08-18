@@ -4,6 +4,7 @@ from machineries.models import (
     Favorite,
     Machinery,
     MachineryInfo,
+    MachineryBrandname,
     ImageMachinery,
 )
 
@@ -42,3 +43,8 @@ class FavoriteInfo(admin.ModelAdmin):
         "user",
         "machinery",
     )
+
+
+@admin.register(MachineryBrandname)
+class AdminMachineryBrandname(admin.ModelAdmin):
+    list_display = ("id", "brand")

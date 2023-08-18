@@ -4,9 +4,29 @@ from django.db import models
 from core.choices_classes import Category
 
 
+class MachineryBrandname(models.Model):
+    brand = models.CharField(
+        verbose_name="Марка техники", max_length=100, blank=False, null=False
+    )
+
+    class Meta:
+        verbose_name = "Марка техники"
+        verbose_name_plural = "Марки техники"
+
+    def __str__(self):
+        return self.brand
+
+
 class MachineryInfo(models.Model):
+    mark = models.ForeignKey(
+        MachineryBrandname,
+        on_delete=models.CASCADE,
+        verbose_name="Марка техники",
+        related_name="brandname",
+        null=True,
+    )
     name = models.CharField(
-        verbose_name="Название техники",
+        verbose_name="Модель техники",
         max_length=100,
         blank=False,
         null=False,
@@ -34,11 +54,11 @@ class MachineryInfo(models.Model):
     )
 
     class Meta:
-        verbose_name = "Техника"
-        verbose_name_plural = "Техники"
+        verbose_name = "Модель техники"
+        verbose_name_plural = "Модели техники"
 
     def __str__(self):
-        return self.name
+        return f"{self.mark} {self.name}"
 
 
 class Machinery(models.Model):
@@ -109,12 +129,12 @@ class ImageMachinery(models.Model):
         default=False,
     )
     machinery = models.ForeignKey(
-        MachineryInfo,
+        Machinery,
         on_delete=models.CASCADE,
     )
 
     def __str__(self) -> str:
-        return f"{self.machinery.machineries.name} {self.description_image}"
+        return f"{self.machinery.machinery.name} {self.description_image}"
 
     class Meta:
         verbose_name = "Изображение"
