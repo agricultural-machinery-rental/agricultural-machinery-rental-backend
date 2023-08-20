@@ -7,6 +7,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from core.enums import Limits
 from users.models import Callback, User
+from api.v1.users.validators import check_names, check_password
 
 
 class UserSerializer(ModelSerializer):
@@ -37,11 +38,16 @@ class CreateUserSerializer(ModelSerializer):
         validators=[UniqueValidator(queryset=User.objects.all())],
     )
     first_name = serializers.CharField(
-        max_length=Limits.MAX_LENGTH_FIRST_NAME,
+        max_length=Limits.MAX_LENGTH_FIRST_NAME, validators=[check_names]
     )
-    last_name = serializers.CharField(max_length=Limits.MAX_LENGTH_LAST_NAME)
+    last_name = serializers.CharField(
+        max_length=Limits.MAX_LENGTH_LAST_NAME, validators=[check_names]
+    )
     patronymic = serializers.CharField(
-        max_length=Limits.MAX_LENGTH_PATRONYMIC, allow_blank=True, default=None
+        max_length=Limits.MAX_LENGTH_PATRONYMIC,
+        validators=[check_names],
+        allow_blank=True,
+        default=None,
     )
     phone_number = PhoneNumberField(
         validators=[UniqueValidator(queryset=User.objects.all())]
@@ -51,7 +57,9 @@ class CreateUserSerializer(ModelSerializer):
         allow_null=True,
         default=None,
     )
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(
+        write_only=True, validators=[check_password]
+    )
 
     class Meta:
         model = User
