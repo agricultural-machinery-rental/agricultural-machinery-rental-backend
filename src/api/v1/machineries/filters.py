@@ -6,7 +6,7 @@ from machineries.models import (Machinery, MachineryBrandname, MachineryInfo,
                                 WorkType)
 
 
-class MachineryWorkTypeFilter(FilterSet):
+class MachineryFilter(FilterSet):
     mark = ModelMultipleChoiceFilter(
         field_name="machinery__mark__brand",
         to_field_name="brand",

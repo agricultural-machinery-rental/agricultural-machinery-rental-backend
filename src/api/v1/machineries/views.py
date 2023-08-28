@@ -13,7 +13,7 @@ from api.v1.machineries.serializers import (
     MachineryInfoSerializer,
     WorkTypeSerializer,
 )
-from api.v1.machineries.filters import MachineryWorkTypeFilter
+from api.v1.machineries.filters import MachineryFilter
 from machineries.models import (
     Favorite,
     Machinery,
@@ -41,7 +41,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Machinery.objects.all()
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = MachineryWorkTypeFilter
+    filterset_class = MachineryFilter
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
