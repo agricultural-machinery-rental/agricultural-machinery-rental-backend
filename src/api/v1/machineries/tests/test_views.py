@@ -2,8 +2,12 @@ from django.urls import reverse
 from http import HTTPStatus
 
 from core.fixtures import TestMachinaryFixture
-from machineries.models import (Machinery, MachineryBrandname, MachineryInfo,
-                                WorkType)
+from machineries.models import (
+    Machinery,
+    MachineryBrandname,
+    MachineryInfo,
+    WorkType,
+)
 
 
 class TestWorkTypeView(TestMachinaryFixture):
@@ -25,9 +29,11 @@ class TestMachineryView(TestMachinaryFixture):
         )
         self.assertEqual(
             len(response_1.data),
-            len(Machinery.objects.filter(
-                machinery__mark__brand=self.brand_1.brand
-            ))
+            len(
+                Machinery.objects.filter(
+                    machinery__mark__brand=self.brand_1.brand
+                )
+            ),
         )
 
         response_2 = self.user_client.get(
@@ -35,9 +41,11 @@ class TestMachineryView(TestMachinaryFixture):
         )
         self.assertEqual(
             len(response_2.data),
-            len(Machinery.objects.filter(
-                machinery__work_type__slug=self.work_type_1.slug
-            ))
+            len(
+                Machinery.objects.filter(
+                    machinery__work_type__slug=self.work_type_1.slug
+                )
+            ),
         )
 
         response_3 = self.user_client.get(
@@ -45,9 +53,7 @@ class TestMachineryView(TestMachinaryFixture):
         )
         self.assertEqual(
             len(response_3.data),
-            len(Machinery.objects.filter(
-                machinery__category=1
-            ))
+            len(Machinery.objects.filter(machinery__category=1)),
         )
 
         response_4 = self.user_client.get(
@@ -55,9 +61,11 @@ class TestMachineryView(TestMachinaryFixture):
         )
         self.assertEqual(
             len(response_4.data),
-            len(Machinery.objects.filter(
-                machinery__name=self.machinary1_info.name
-            ))
+            len(
+                Machinery.objects.filter(
+                    machinery__name=self.machinary1_info.name
+                )
+            ),
         )
 
 
@@ -66,8 +74,7 @@ class TestMachineryBrandnameView(TestMachinaryFixture):
         response = self.user2_client.get(reverse("brands-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(
-            len(response.data),
-            len(MachineryBrandname.objects.all())
+            len(response.data), len(MachineryBrandname.objects.all())
         )
 
 
@@ -75,7 +82,4 @@ class TestMachineryInfoView(TestMachinaryFixture):
     def test_get_models_list(self):
         response = self.user2_client.get(reverse("models-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(
-            len(response.data),
-            len(MachineryInfo.objects.all())
-        )
+        self.assertEqual(len(response.data), len(MachineryInfo.objects.all()))
