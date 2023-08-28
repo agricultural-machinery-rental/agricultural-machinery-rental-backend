@@ -1,14 +1,26 @@
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
-from api.v1.machineries.serializers import MachinerySerializer
-from machineries.models import Favorite, Machinery
+from api.v1.machineries.serializers import (
+    MachinerySerializer,
+    MachineryBrandnameSerializer,
+    MachineryInfoSerializer,
+    WorkTypeSerializer,
+)
+from api.v1.machineries.filters import MachineryWorkTypeFilter
+from machineries.models import (
+    Favorite,
+    Machinery,
+    MachineryInfo,
+    MachineryBrandname,
+    WorkType,
+)
 
 
 @extend_schema(tags=["Machinery"])
@@ -29,13 +41,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Machinery.objects.all()
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = (
-        "machinery__category",
-        "location",
-        "rental_price",
-        "machinery__mark",
-        "machinery__name",
-    )
+    filterset_class = MachineryWorkTypeFilter
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
@@ -74,3 +80,41 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             )
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(tags=["WorkType"])
+@extend_schema_view(
+    list=extend_schema(summary="Список видов работ"),
+)
+class WorkTypeViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = WorkTypeSerializer
+    queryset = WorkType.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+
+
+@extend_schema(tags=["MachineryBrandname"])
+@extend_schema_view(
+    list=extend_schema(summary="Список марок техники"),
+)
+class MachineryBrandnameViewSet(
+    mixins.ListModelMixin, viewsets.GenericViewSet
+):
+    serializer_class = MachineryBrandnameSerializer
+    queryset = MachineryBrandname.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
+
+
+@extend_schema(tags=["MachineryInfo"])
+@extend_schema_view(
+    list=extend_schema(summary="Список моделей техники"),
+)
+class MachineryInfoViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    serializer_class = MachineryInfoSerializer
+    queryset = MachineryInfo.objects.all()
+    permission_classes = [
+        permissions.AllowAny,
+    ]
