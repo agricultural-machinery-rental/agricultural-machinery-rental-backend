@@ -34,8 +34,9 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     Обрабатываемые запросы: GET (list&detail).
     Эндпоинты: /machineries/
     Фильтры по Категории (machinery__category), Локации(location),
-        Цене(rental_price), Марке техники(machinery__mark),
-        Модели техники(machinery__name)
+        Цене аренды в час(price_per_hour), за смену(price_per_shift),
+        Марке техники(machinery__mark), Модели техники(machinery__name),
+        Видам работ (machinery__work_type)
     """
 
     queryset = Machinery.objects.all()

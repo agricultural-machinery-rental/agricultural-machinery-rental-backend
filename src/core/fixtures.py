@@ -59,8 +59,12 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
         cls.work_type_1 = WorkType.objects.create(title="Сеять", slug="seyat")
         cls.work_type_2 = WorkType.objects.create(title="Жать", slug="jat")
         cls.work_type_3 = WorkType.objects.create(title="Копать", slug="copat")
-        cls.brand_1 = MachineryBrandname.objects.create(brand="JCB")
-        cls.brand_2 = MachineryBrandname.objects.create(brand="Komatsu")
+        cls.brand_1 = MachineryBrandname.objects.create(
+            brand="JCB", country_of_origin="Великобритания"
+        )
+        cls.brand_2 = MachineryBrandname.objects.create(
+            brand="Komatsu", country_of_origin="Япония"
+        )
         cls.machinary1_info = MachineryInfo.objects.create(
             name="Трактор 1",
             mark=cls.brand_1,
@@ -77,8 +81,8 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
             location="Здесь рядом",
             mileage=1000,
             delivery_distance_km=100,
-            delivery_cost=150,
-            rental_price=1000,
+            price_per_shift=15000.00,
+            price_per_hour=1000.00,
         )
         cls.machinary2_info = MachineryInfo.objects.create(
             name="Комбайн 1",
@@ -96,8 +100,8 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
             location="Тут недалеко",
             mileage=10000,
             delivery_distance_km=10,
-            delivery_cost=250,
-            rental_price=5000,
+            price_per_shift=25000.00,
+            price_per_hour=5000.00,
         )
 
 

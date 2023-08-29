@@ -105,7 +105,7 @@ class ReservationStatus(models.Model):
         auto_now=True,
     )
 
-    objects = ReservationStatusManagger
+    objects = ReservationStatusManagger()
 
     class Meta:
         verbose_name = "Статус Заказа"
