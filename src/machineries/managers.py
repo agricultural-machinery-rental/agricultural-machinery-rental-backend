@@ -6,17 +6,25 @@ class MachineryInfoManager(models.Manager):
     """
     Пользовательсткий менеджер для модели "Модель техники".
     """
+
     def get_queryset(self) -> QuerySet:
-        return (super().get_queryset()
-                .select_related("mark")
-                .prefetch_related("work_type"))
+        return (
+            super()
+            .get_queryset()
+            .select_related("mark")
+            .prefetch_related("work_type")
+        )
 
 
 class MachineryManager(models.Manager):
     """
     Пользовательсткий менеджер для модели "Каротчка техники".
     """
+
     def get_queryset(self) -> QuerySet:
-        return (super().get_queryset()
-                .select_related("machinery", "machinery__mark")
-                .prefetch_related("machinery__work_type"))
+        return (
+            super()
+            .get_queryset()
+            .select_related("machinery", "machinery__mark")
+            .prefetch_related("machinery__work_type")
+        )
