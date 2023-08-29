@@ -2,8 +2,9 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.test import APITestCase, APIClient
 
+from core.choices_classes import ReservationStatusOptions
 from machineries.models import Machinery, MachineryInfo
-from orders.models import Reservation, ReservationStatus, Status
+from orders.models import Reservation
 from users.models import User
 
 
@@ -91,21 +92,6 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.status_created = Status.objects.create(
-            name=0, description="Заказ создан"
-        )
-        cls.status_confirmed = Status.objects.create(
-            name=1, description="Заказ подтвержден"
-        )
-        cls.status_cancelled = Status.objects.create(
-            name=2, description="Заказ отменен"
-        )
-        cls.status_at_work = Status.objects.create(
-            name=3, description="В работе"
-        )
-        cls.status_finished = Status.objects.create(
-            name=4, description="Заказ завершен"
-        )
         cls.reservation1 = Reservation.objects.create(
             number="1",
             machinery=cls.machinary_1,
@@ -117,11 +103,8 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
             number="10",
             machinery=cls.machinary_2,
             renter=cls.user,
-            start_date="2123-08-16T11:33:16.029352+03:00",
-            end_date="2123-08-17T11:32:16.029352+03:00",
-        )
-        cls.reservation2_status = ReservationStatus.objects.create(
-            status=cls.status_finished, reservation=cls.reservation2
+            start_date="2123-08-26T11:33:16.029352+03:00",
+            end_date="2123-08-27T11:32:16.029352+03:00",
         )
         cls.reservation3 = Reservation.objects.create(
             number="10",
@@ -130,6 +113,10 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
             start_date="2123-08-18T11:33:16.029352+03:00",
             end_date="2123-08-18T12:32:16.029352+03:00",
         )
-        cls.reservation3_status = ReservationStatus.objects.create(
-            status=cls.status_cancelled, reservation=cls.reservation3
+        cls.reservation4 = Reservation.objects.create(
+            number="11",
+            machinery=cls.machinary_1,
+            renter=cls.user,
+            start_date=timezone.now() + timedelta(hours=47),
+            end_date=timezone.now() + timedelta(hours=96),
         )

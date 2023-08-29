@@ -35,8 +35,8 @@ class CreateReservationSerializer(serializers.ModelSerializer):
             start_date__lte=data.get("end_date"),
             end_date__gte=data.get("start_date"),
         ).exclude(
-            Q(status__name=ReservationStatusOptions.CANCELLED)
-            | Q(status__name=ReservationStatusOptions.FINISHED)
+            Q(status=ReservationStatusOptions.CANCELLED)
+            | Q(status=ReservationStatusOptions.FINISHED)
         )
         if self.context["request"].method == "PUT":
             instance_id = (
