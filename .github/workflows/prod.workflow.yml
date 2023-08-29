@@ -24,6 +24,7 @@ jobs:
           envkey_POSTGRES_SERVER: ${{ secrets.POSTGRES_SERVER }}
           envkey_POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           envkey_DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          envkey_FRONTEND_DOCKERHUB_USERNAME: ${{ secrets.FRONTEND_DOCKERHUB_USERNAME }}
           envkey_EMAIL_FILE: ${{ secrets.EMAIL_FILE }}
           envkey_EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
           envkey_EMAIL_USE_TLS: "YES"
