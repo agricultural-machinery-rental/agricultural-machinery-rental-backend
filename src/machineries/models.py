@@ -31,6 +31,11 @@ class MachineryInfo(models.Model):
         blank=False,
         null=False,
     )
+    work_type = models.ManyToManyField(
+        "WorkType",
+        related_name="machinery_info",
+        verbose_name="тип работ",
+    )
     category = models.IntegerField(
         verbose_name="Категория техники",
         choices=Category.choices,
@@ -110,7 +115,10 @@ class Machinery(models.Model):
         verbose_name_plural = "Карточки техники"
 
     def __str__(self):
-        return f"{self.machinery.name} - {self.location} ({self.year_of_manufacture})"
+        return (
+            f"{self.machinery.name} - {self.location}"
+            f" ({self.year_of_manufacture})"
+        )
 
 
 class ImageMachinery(models.Model):
@@ -171,3 +179,27 @@ class Favorite(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} добавил {self.machinery.machinery.name}"
+
+
+class WorkType(models.Model):
+    """
+    Модель для видов работ.
+    """
+
+    title = models.CharField(
+        "Название",
+        max_length=50,
+        unique=True,
+    )
+    slug = models.SlugField(
+        "Слаг",
+        max_length=50,
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = "Вид работ"
+        verbose_name_plural = "Виды работ"
+
+    def __str__(self):
+        return self.title
