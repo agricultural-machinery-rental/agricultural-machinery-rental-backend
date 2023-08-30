@@ -3,7 +3,12 @@ from django.utils import timezone
 from rest_framework.test import APITestCase, APIClient
 
 from core.choices_classes import ReservationStatusOptions
-from machineries.models import Machinery, MachineryInfo
+from machineries.models import (
+    Machinery,
+    MachineryBrandname,
+    MachineryInfo,
+    WorkType,
+)
 from orders.models import Reservation
 from users.models import User
 
@@ -52,14 +57,21 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.work_type_1 = WorkType.objects.create(title="Сеять", slug="seyat")
+        cls.work_type_2 = WorkType.objects.create(title="Жать", slug="jat")
+        cls.work_type_3 = WorkType.objects.create(title="Копать", slug="copat")
+        cls.brand_1 = MachineryBrandname.objects.create(brand="JCB")
+        cls.brand_2 = MachineryBrandname.objects.create(brand="Komatsu")
         cls.machinary1_info = MachineryInfo.objects.create(
             name="Трактор 1",
+            mark=cls.brand_1,
             category=1,
             description="Супер трактор",
             attachments_available=True,
             power_hp=150,
             payload_capacity_kg=1500,
         )
+        cls.machinary1_info.work_type.add(cls.work_type_3)
         cls.machinary_1 = Machinery.objects.create(
             machinery=cls.machinary1_info,
             year_of_manufacture=2020,
@@ -72,11 +84,13 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
         cls.machinary2_info = MachineryInfo.objects.create(
             name="Комбайн 1",
             category=2,
+            mark=cls.brand_2,
             description="Супер комбайн",
             attachments_available=True,
             power_hp=750,
             payload_capacity_kg=1500,
         )
+        cls.machinary2_info.work_type.add(cls.work_type_1, cls.work_type_2)
         cls.machinary_2 = Machinery.objects.create(
             machinery=cls.machinary2_info,
             year_of_manufacture=2020,
