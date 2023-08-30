@@ -41,11 +41,11 @@ class MachineryFilter(FilterSet):
     class Meta:
         model = Machinery
         fields = [
-            "machinery__work_type",
-            "machinery__category",
-            "machinery__name",
+            "work_type",
+            "category",
+            "name",
             "location",
             "price_per_hour",
-            "machinery__mark__brand",
+            "mark",
             "price_per_shift",
         ]
