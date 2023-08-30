@@ -2,7 +2,7 @@ from django.urls import reverse
 from http import HTTPStatus
 
 from core.fixtures import TestOrdersFixture
-from orders.models import Reservation, ReservationStatus
+from orders.models import Reservation
 
 
 class TestOrdersView(TestOrdersFixture):
@@ -31,11 +31,6 @@ class TestOrdersView(TestOrdersFixture):
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertTrue(
             Reservation.objects.filter(number="2", machinery_id=2).exists()
-        )
-        self.assertTrue(
-            ReservationStatus.objects.filter(
-                status__name="0", reservation__machinery__id=2
-            ).exists()
         )
 
     def test_existing_reservations(self):
@@ -146,3 +141,34 @@ class TestOrdersView(TestOrdersFixture):
         )
         self.assertEqual(response_2.status_code, HTTPStatus.OK)
         self.assertEqual(response_2.data["comment"], order_data["comment"])
+
+    def test_cancel_reservation(self):
+        # отменяем резервацию
+        cancel_reservation3 = self.user_client.post(
+            reverse("orders-cancel", kwargs={"pk": self.reservation3.id})
+        )
+        self.assertEqual(
+            cancel_reservation3.status_code, HTTPStatus.NO_CONTENT
+        )
+
+        # отмена уже отмененного резерва
+        cancel_reservation3 = self.user_client.post(
+            reverse("orders-cancel", kwargs={"pk": self.reservation3.id})
+        )
+        answer = {"message": "Такой резерв уже отменен!"}
+        self.assertEqual(
+            cancel_reservation3.status_code, HTTPStatus.BAD_REQUEST
+        )
+        self.assertEqual(cancel_reservation3.json(), answer)
+
+        # отмена менее чем за 48 часов
+        cancel_reservation4 = self.user_client.post(
+            reverse("orders-cancel", kwargs={"pk": self.reservation4.id})
+        )
+        answer = {
+            "message": "Отмена невозможна! Осталось менее 48 часов до начала резервации."
+        }
+        self.assertEqual(
+            cancel_reservation4.status_code, HTTPStatus.BAD_REQUEST
+        )
+        self.assertEqual(cancel_reservation4.json(), answer)

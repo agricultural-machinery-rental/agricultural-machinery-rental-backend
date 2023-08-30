@@ -19,8 +19,8 @@ class Category(models.IntegerChoices):
 
 
 class ReservationStatusOptions(models.IntegerChoices):
-    CREATED = 0
-    CONFIRMED = 1
-    CANCELLED = 2
-    AT_WORK = 3
-    FINISHED = 4
+    CREATED = 0, "Создан"
+    CONFIRMED = 1, "Подтвержден"
+    CANCELLED = 2, "Отменен"
+    AT_WORK = 3, "В работе"
+    FINISHED = 4, "Завершен"
