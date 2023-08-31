@@ -102,6 +102,28 @@ class TestMachineryView(TestMachinaryFixture):
             ),
         )
 
+        response_7 = self.user_client.get(
+            (reverse("machinery-list") + f"?location={self.location_1.title}")
+        )
+        self.assertEqual(
+            len(response_7.data),
+            len(
+                Machinery.objects.filter(location__title=self.location_1.title)
+            ),
+        )
+
+        response_8 = self.user_client.get(
+            (reverse("machinery-list") + f"?region={self.region_1.title}")
+        )
+        self.assertEqual(
+            len(response_8.data),
+            len(
+                Machinery.objects.filter(
+                    location__region__title=self.region_1.title
+                )
+            ),
+        )
+
 
 class TestMachineryBrandnameView(TestMachinaryFixture):
     def test_get_brands_list(self):

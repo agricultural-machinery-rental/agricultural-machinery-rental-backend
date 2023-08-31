@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from api.v1.locations.serializers import LocationSerializer
 from api.v1.machineries.fields import Base64ImageField
 from core.choices_classes import Category
 
@@ -86,6 +87,7 @@ class MachinerySerializer(serializers.ModelSerializer):
         many=True,
         source="images_machinery",
     )
+    location = LocationSerializer(read_only=True)
 
     class Meta:
         fields = (

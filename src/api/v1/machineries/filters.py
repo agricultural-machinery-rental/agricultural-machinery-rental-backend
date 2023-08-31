@@ -1,5 +1,4 @@
 from django_filters import (
-    CharFilter,
     ChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
@@ -7,6 +6,7 @@ from django_filters import (
 )
 
 from core.choices_classes import Category
+from locations.models import Location, Region
 from machineries.models import (
     Machinery,
     MachineryBrandname,
@@ -26,7 +26,16 @@ class MachineryFilter(FilterSet):
         to_field_name="slug",
         queryset=WorkType.objects.all(),
     )
-    location = CharFilter(field_name="location", lookup_expr="icontains")
+    location = ModelMultipleChoiceFilter(
+        field_name="location__title",
+        to_field_name="title",
+        queryset=Location.objects.all(),
+    )
+    region = ModelMultipleChoiceFilter(
+        field_name="location__region__title",
+        to_field_name="title",
+        queryset=Region.objects.all(),
+    )
     price_per_hour = RangeFilter(field_name="price_per_hour")
     price_per_shift = RangeFilter(field_name="price_per_shift")
     name = ModelMultipleChoiceFilter(
@@ -45,6 +54,7 @@ class MachineryFilter(FilterSet):
             "category",
             "name",
             "location",
+            "region",
             "price_per_hour",
             "mark",
             "price_per_shift",
