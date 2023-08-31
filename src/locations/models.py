@@ -5,11 +5,9 @@ from .managers import LocationManager
 
 class Region(models.Model):
     """Субъект Федерации."""
+
     title = models.CharField(
-        "Наименование",
-        max_length=50,
-        unique=True,
-        db_index=True
+        "Наименование", max_length=50, unique=True, db_index=True
     )
 
     class Meta:
@@ -23,15 +21,13 @@ class Region(models.Model):
 
 class Location(models.Model):
     """Населенный пункт."""
-    title = models.CharField(
-        "Наименование",
-        max_length=50
-    )
+
+    title = models.CharField("Наименование", max_length=50)
     region = models.ForeignKey(
         Region,
         on_delete=models.PROTECT,
         verbose_name="Субъект Федерации",
-        related_name="locations"
+        related_name="locations",
     )
 
     objects = LocationManager()

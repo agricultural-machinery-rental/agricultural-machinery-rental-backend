@@ -15,6 +15,7 @@ class RegionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     Вьюсет для Субъектов Федерации.
     """
+
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
     permission_classes = [permissions.AllowAny]
@@ -30,6 +31,7 @@ class LocationViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     Вьюсет для населенных пунктов.
     """
+
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
     permission_classes = [permissions.AllowAny]
