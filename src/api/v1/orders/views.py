@@ -88,10 +88,3 @@ class ReservationViewSet(
             {"message": f"Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,
         )
-
-
-@extend_schema(tags=["Orders"], summary="Тестовая заглушка")
-@api_view(["GET"])
-def order_hello(request):
-    result = {"order": "Hello world"}
-    return Response(result)
