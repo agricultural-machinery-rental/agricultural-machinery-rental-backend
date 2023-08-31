@@ -67,6 +67,7 @@ class ReservationViewSet(
         Отмена резервирования пользователем.
         """
         reservation = get_object_or_404(Reservation, pk=kwargs["pk"])
+        self.check_object_permissions(self.request, reservation)
         current_time = datetime.now(timezone.utc)
         if reservation.status == ReservationStatusOptions.CANCELLED:
             return Response(
@@ -87,10 +88,3 @@ class ReservationViewSet(
             {"message": f"Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,
         )
-
-
-@extend_schema(tags=["Orders"], summary="Тестовая заглушка")
-@api_view(["GET"])
-def order_hello(request):
-    result = {"order": "Hello world"}
-    return Response(result)
