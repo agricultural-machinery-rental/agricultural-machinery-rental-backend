@@ -27,7 +27,7 @@ class MachineryBrandnameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MachineryBrandname
-        fields = ("brand",)
+        fields = ("brand", "country_of_origin")
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -95,8 +95,8 @@ class MachinerySerializer(serializers.ModelSerializer):
             "location",
             "mileage",
             "delivery_distance_km",
-            "delivery_cost",
-            "rental_price",
+            "price_per_shift",
+            "price_per_hour",
             "is_favorited",
             "machinery",
             "images",

@@ -68,6 +68,40 @@ class TestMachineryView(TestMachinaryFixture):
             ),
         )
 
+        response_5 = self.user_client.get(
+            (
+                reverse("machinery-list")
+                + "?price_per_hour_min=500.00"
+                + "&price_per_hour_max=1100.00"
+            )
+        )
+        self.assertEqual(
+            len(response_5.data),
+            len(
+                Machinery.objects.filter(
+                    price_per_hour__gte=500.00,
+                    price_per_hour__lte=1100.00,
+                )
+            ),
+        )
+
+        response_6 = self.user_client.get(
+            (
+                reverse("machinery-list")
+                + "?price_per_shift_min=10000.00"
+                + "&price_per_shift_max=21000.00"
+            )
+        )
+        self.assertEqual(
+            len(response_6.data),
+            len(
+                Machinery.objects.filter(
+                    price_per_shift__gte=10000.00,
+                    price_per_shift__lte=21000.00,
+                )
+            ),
+        )
+
 
 class TestMachineryBrandnameView(TestMachinaryFixture):
     def test_get_brands_list(self):

@@ -59,7 +59,7 @@ class Reservation(models.Model):
         null=True,
     )
 
-    objects = ReservationManagger
+    objects = ReservationManagger()
 
     class Meta:
         verbose_name = "Резервирование"

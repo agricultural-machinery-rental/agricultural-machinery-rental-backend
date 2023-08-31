@@ -27,7 +27,8 @@ class MachineryFilter(FilterSet):
         queryset=WorkType.objects.all(),
     )
     location = CharFilter(field_name="location", lookup_expr="icontains")
-    rental_price = RangeFilter(field_name="rental_price")
+    price_per_hour = RangeFilter(field_name="price_per_hour")
+    price_per_shift = RangeFilter(field_name="price_per_shift")
     name = ModelMultipleChoiceFilter(
         field_name="machinery__name",
         to_field_name="name",
@@ -40,10 +41,11 @@ class MachineryFilter(FilterSet):
     class Meta:
         model = Machinery
         fields = [
-            "machinery__work_type",
-            "machinery__category",
-            "machinery__name",
+            "work_type",
+            "category",
+            "name",
             "location",
-            "rental_price",
-            "machinery__mark__brand",
+            "price_per_hour",
+            "mark",
+            "price_per_shift",
         ]
