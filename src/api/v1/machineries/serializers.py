@@ -8,7 +8,18 @@ from machineries.models import (
     Machinery,
     MachineryInfo,
     MachineryBrandname,
+    WorkType,
 )
+
+
+class WorkTypeSerializer(serializers.ModelSerializer):
+    """
+    Сериализатор для видов работ.
+    """
+
+    class Meta:
+        model = WorkType
+        fields = ["title", "slug"]
 
 
 class MachineryBrandnameSerializer(serializers.ModelSerializer):
@@ -16,7 +27,7 @@ class MachineryBrandnameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MachineryBrandname
-        fields = ("brand",)
+        fields = ("brand", "country_of_origin")
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -36,17 +47,24 @@ class ImageSerializer(serializers.ModelSerializer):
         model = ImageMachinery
 
 
+class WorkTypeListField(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.slug
+
+
 class MachineryInfoSerializer(serializers.ModelSerializer):
     """Сериализация информации о технике."""
 
     category = serializers.SerializerMethodField()
     mark = MachineryBrandnameSerializer(read_only=True)
+    work_type = WorkTypeListField(read_only=True, many=True)
 
     class Meta:
         fields = (
             "mark",
             "name",
             "category",
+            "work_type",
             "description",
             "attachments_available",
             "power_hp",
@@ -77,8 +95,8 @@ class MachinerySerializer(serializers.ModelSerializer):
             "location",
             "mileage",
             "delivery_distance_km",
-            "delivery_cost",
-            "rental_price",
+            "price_per_shift",
+            "price_per_hour",
             "is_favorited",
             "machinery",
             "images",

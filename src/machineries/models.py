@@ -3,21 +3,33 @@ from django.db import models
 
 from core.choices_classes import Category
 
+from .managers import MachineryManager, MachineryInfoManager
+
 
 class MachineryBrandname(models.Model):
-    brand = models.CharField(
-        verbose_name="Марка техники", max_length=100, blank=False, null=False
+    """
+    Марка техники.
+    """
+
+    brand = models.CharField(verbose_name="Марка техники", max_length=100)
+    country_of_origin = models.CharField(
+        verbose_name="Страна-производитель", max_length=100
     )
 
     class Meta:
         verbose_name = "Марка техники"
         verbose_name_plural = "Марки техники"
+        ordering = ["brand"]
 
     def __str__(self):
         return self.brand
 
 
 class MachineryInfo(models.Model):
+    """
+    Модель техники.
+    """
+
     mark = models.ForeignKey(
         MachineryBrandname,
         on_delete=models.CASCADE,
@@ -26,25 +38,24 @@ class MachineryInfo(models.Model):
         null=True,
     )
     name = models.CharField(
-        verbose_name="Модель техники",
+        verbose_name="Название",
         max_length=100,
-        blank=False,
-        null=False,
+    )
+    work_type = models.ManyToManyField(
+        "WorkType",
+        related_name="machinery_info",
+        verbose_name="Тип работ",
     )
     category = models.IntegerField(
         verbose_name="Категория техники",
         choices=Category.choices,
-        blank=False,
-        null=False,
     )
     description = models.TextField(
         verbose_name="Описание техники",
-        blank=False,
-        null=False,
     )
     attachments_available = models.BooleanField(
         verbose_name="Возможность навесного оборудования",
-        null=False,
+        default=False,
     )
     power_hp = models.PositiveSmallIntegerField(
         verbose_name="Мощность, л.с.",
@@ -52,6 +63,8 @@ class MachineryInfo(models.Model):
     payload_capacity_kg = models.PositiveSmallIntegerField(
         verbose_name="Грузоподъемность, кг",
     )
+
+    objects = MachineryInfoManager()
 
     class Meta:
         verbose_name = "Модель техники"
@@ -62,6 +75,10 @@ class MachineryInfo(models.Model):
 
 
 class Machinery(models.Model):
+    """
+    Каротчка техники.
+    """
+
     machinery = models.ForeignKey(
         MachineryInfo,
         on_delete=models.PROTECT,
@@ -70,8 +87,6 @@ class Machinery(models.Model):
     )
     year_of_manufacture = models.PositiveSmallIntegerField(
         verbose_name="Год выпуска",
-        blank=False,
-        null=False,
     )
     available = models.BooleanField(
         verbose_name="Доступность",
@@ -81,36 +96,31 @@ class Machinery(models.Model):
     location = models.CharField(
         verbose_name="Местонахождение",
         max_length=100,
-        blank=False,
-        null=False,
     )
     mileage = models.PositiveSmallIntegerField(
         verbose_name="Пробег",
-        blank=False,
-        null=False,
     )
     delivery_distance_km = models.PositiveSmallIntegerField(
         verbose_name="Дистанция доставки, км",
-        blank=False,
-        null=False,
     )
-    delivery_cost = models.PositiveIntegerField(
-        verbose_name="Стоимость доставки",
-        blank=False,
-        null=False,
+    price_per_shift = models.DecimalField(
+        verbose_name="Цена аренды за смену", max_digits=8, decimal_places=2
     )
-    rental_price = models.PositiveIntegerField(
-        verbose_name="Стоимость аренды",
-        blank=False,
-        null=False,
+    price_per_hour = models.DecimalField(
+        verbose_name="Цена аренды в час", max_digits=7, decimal_places=2
     )
+
+    objects = MachineryManager()
 
     class Meta:
         verbose_name = "Карточка техники"
         verbose_name_plural = "Карточки техники"
 
     def __str__(self):
-        return f"{self.machinery.name} - {self.location} ({self.year_of_manufacture})"
+        return (
+            f"{self.machinery.name} - {self.location}"
+            f" ({self.year_of_manufacture})"
+        )
 
 
 class ImageMachinery(models.Model):
@@ -171,3 +181,27 @@ class Favorite(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} добавил {self.machinery.machinery.name}"
+
+
+class WorkType(models.Model):
+    """
+    Модель для видов работ.
+    """
+
+    title = models.CharField(
+        "Название",
+        max_length=50,
+        unique=True,
+    )
+    slug = models.SlugField(
+        "Слаг",
+        max_length=50,
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = "Вид работ"
+        verbose_name_plural = "Виды работ"
+
+    def __str__(self):
+        return self.title

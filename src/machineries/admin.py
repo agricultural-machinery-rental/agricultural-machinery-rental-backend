@@ -6,6 +6,7 @@ from machineries.models import (
     MachineryInfo,
     MachineryBrandname,
     ImageMachinery,
+    WorkType,
 )
 
 
@@ -48,3 +49,8 @@ class FavoriteInfo(admin.ModelAdmin):
 @admin.register(MachineryBrandname)
 class AdminMachineryBrandname(admin.ModelAdmin):
     list_display = ("id", "brand")
+
+
+@admin.register(WorkType)
+class AdminWorkType(admin.ModelAdmin):
+    list_display = ("slug", "title")

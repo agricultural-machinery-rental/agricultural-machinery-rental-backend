@@ -18,3 +18,13 @@ repos:
       args:
         - --line-length=79
         - --include=src/
+
+# Проверяет есть ли изменения в моделях не зафиксированные в миграциях
+-   repo: local
+    hooks:
+    - id: pre-commit-check-makemigrations
+      name: Check django migrations
+      entry: ./src/manage.py makemigrations --check --dry-run
+      language: system
+      types: [python]
+      pass_filenames: false
