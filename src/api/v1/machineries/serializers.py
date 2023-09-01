@@ -12,6 +12,8 @@ from machineries.models import (
     WorkType,
 )
 
+from .fields import WorkTypeListField
+
 
 class WorkTypeSerializer(serializers.ModelSerializer):
     """
@@ -46,11 +48,6 @@ class ImageSerializer(serializers.ModelSerializer):
             "description_image",
         )
         model = ImageMachinery
-
-
-class WorkTypeListField(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.slug
 
 
 class MachineryInfoSerializer(serializers.ModelSerializer):
