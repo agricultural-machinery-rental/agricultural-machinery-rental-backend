@@ -2,6 +2,7 @@ from django.contrib.auth import settings
 from django.db import models
 
 from core.choices_classes import Category
+from locations.models import Location
 
 from .managers import MachineryManager, MachineryInfoManager
 
@@ -82,7 +83,6 @@ class Machinery(models.Model):
     machinery = models.ForeignKey(
         MachineryInfo,
         on_delete=models.PROTECT,
-        related_name="machineries",
         verbose_name="Техника",
     )
     year_of_manufacture = models.PositiveSmallIntegerField(
@@ -93,9 +93,10 @@ class Machinery(models.Model):
         null=False,
         default=True,
     )
-    location = models.CharField(
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.PROTECT,
         verbose_name="Местонахождение",
-        max_length=100,
     )
     mileage = models.PositiveSmallIntegerField(
         verbose_name="Пробег",
@@ -115,6 +116,7 @@ class Machinery(models.Model):
     class Meta:
         verbose_name = "Карточка техники"
         verbose_name_plural = "Карточки техники"
+        default_related_name = "machineries"
 
     def __str__(self):
         return (

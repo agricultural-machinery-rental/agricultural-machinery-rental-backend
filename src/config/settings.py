@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "machineries.apps.MachineriesConfig",
     "orders.apps.OrdersConfig",
+    "locations.apps.LocationsConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
     "django_filters",

@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework.test import APITestCase, APIClient
 
+from locations.models import Location, Region
 from machineries.models import (
     Machinery,
     MachineryBrandname,
@@ -52,7 +53,21 @@ class TestUserFixture(APITestCase):
         cls.user3_client.force_authenticate(cls.user3)
 
 
-class TestMachinaryFixture(TestUserFixture, APITestCase):
+class TestLocationFixture(TestUserFixture, APITestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.region_1 = Region.objects.create(title="Московская область")
+        cls.region_2 = Region.objects.create(title="Краснодарский край")
+        cls.location_1 = Location.objects.create(
+            title="Химки", region=cls.region_1
+        )
+        cls.location_2 = Location.objects.create(
+            title="Краснодар", region=cls.region_2
+        )
+
+
+class TestMachinaryFixture(TestLocationFixture, APITestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -78,7 +93,7 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
         cls.machinary_1 = Machinery.objects.create(
             machinery=cls.machinary1_info,
             year_of_manufacture=2020,
-            location="Здесь рядом",
+            location=cls.location_1,
             mileage=1000,
             delivery_distance_km=100,
             price_per_shift=15000.00,
@@ -97,7 +112,7 @@ class TestMachinaryFixture(TestUserFixture, APITestCase):
         cls.machinary_2 = Machinery.objects.create(
             machinery=cls.machinary2_info,
             year_of_manufacture=2020,
-            location="Тут недалеко",
+            location=cls.location_2,
             mileage=10000,
             delivery_distance_km=10,
             price_per_shift=25000.00,
