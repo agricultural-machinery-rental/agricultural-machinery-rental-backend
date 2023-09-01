@@ -1,5 +1,6 @@
 # backend for Agricultural Machinery Rental
 [![Build Status](https://github.com/agricultural-machinery-rental/agricultural-machinery-rental-backend/actions/workflows/agriculture_backend_workflow.yaml/badge.svg)](https://github.com/agricultural-machinery-rental/agricultural-machinery-rental-backend/actions/workflows/agriculture_backend_workflow.yaml/)
+[![Build Status](https://github.com/agricultural-machinery-rental/agricultural-machinery-rental-backend/actions/workflows/prod.workflow.yml/badge.svg)](https://github.com/agricultural-machinery-rental/agricultural-machinery-rental-backend/actions/workflows/prod.workflow.yml)
 
 ## Описание:
 API для проекта по аренде сельскохозяйственной техники.

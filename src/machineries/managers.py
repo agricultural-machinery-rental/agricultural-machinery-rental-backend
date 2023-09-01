@@ -25,6 +25,8 @@ class MachineryManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .select_related("machinery", "machinery__mark")
+            .select_related(
+                "machinery", "machinery__mark", "location", "location__region"
+            )
             .prefetch_related("machinery__work_type")
         )
