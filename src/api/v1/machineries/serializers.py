@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.v1.locations.serializers import LocationSerializer
-from api.v1.machineries.fields import Base64ImageField
+from api.v1.machineries.fields import Base64ImageField, WorkTypeListField
 from core.choices_classes import Category
 
 from machineries.models import (
@@ -11,8 +11,6 @@ from machineries.models import (
     MachineryBrandname,
     WorkType,
 )
-
-from .fields import WorkTypeListField
 
 
 class WorkTypeSerializer(serializers.ModelSerializer):
