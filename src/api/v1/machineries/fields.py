@@ -15,3 +15,8 @@ class Base64ImageField(serializers.ImageField):
             data = ContentFile(base64.b64decode(imgstr), name="temp." + ext)
 
         return super().to_internal_value(data)
+
+
+class WorkTypeListField(serializers.RelatedField):
+    def to_representation(self, value):
+        return value.slug

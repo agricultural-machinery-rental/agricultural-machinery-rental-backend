@@ -41,10 +41,11 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         Видам работ (machinery__work_type)
     """
 
-    queryset = Machinery.objects.all()
+    queryset = Machinery.objects.filter(available=True)
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MachineryFilter
+    pagination_class = LimitOffsetPagination
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
