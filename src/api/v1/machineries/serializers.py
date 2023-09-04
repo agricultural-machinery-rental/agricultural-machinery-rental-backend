@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from api.v1.locations.serializers import LocationSerializer
-from api.v1.machineries.fields import Base64ImageField
+from api.v1.machineries.fields import Base64ImageField, WorkTypeListField
 from core.choices_classes import Category
 
 from machineries.models import (
@@ -46,11 +46,6 @@ class ImageSerializer(serializers.ModelSerializer):
             "description_image",
         )
         model = ImageMachinery
-
-
-class WorkTypeListField(serializers.RelatedField):
-    def to_representation(self, value):
-        return value.slug
 
 
 class MachineryInfoSerializer(serializers.ModelSerializer):
