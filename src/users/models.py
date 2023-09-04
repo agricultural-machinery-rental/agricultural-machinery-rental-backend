@@ -104,8 +104,12 @@ class User(AbstractUser):
         return self.role == Role.ADMIN
 
     @property
-    def is_moderator(self):
-        return self.role == Role.MODERATOR
+    def is_manager(self):
+        return self.role == Role.MANAGER
+
+    @property
+    def is_staff(self):
+        return self.role == Role.MANAGER or self.role == Role.ADMIN
 
 
 class Callback(models.Model):

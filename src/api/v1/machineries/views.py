@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework import mixins, viewsets
 from rest_framework import permissions
 from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -39,10 +40,11 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         Видам работ (machinery__work_type)
     """
 
-    queryset = Machinery.objects.all()
+    queryset = Machinery.objects.filter(available=True)
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MachineryFilter
+    pagination_class = LimitOffsetPagination
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])

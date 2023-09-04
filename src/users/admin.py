@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
-from django.contrib.auth.models import Group
 from rest_framework.authtoken.admin import TokenProxy
 
 from users.models import Callback, User
@@ -31,8 +30,12 @@ class UserAdmin(ModelAdmin):
                     "first_name",
                     "patronymic",
                     "phone_number",
+                    "birthday",
+                    "organization_name",
+                    "inn",
                     "is_active",
                     "role",
+                    "groups",
                 ]
             },
         ),
@@ -51,5 +54,4 @@ class CallbackAdmin(ModelAdmin):
     )
 
 
-admin.site.unregister(Group)
 admin.site.unregister(TokenProxy)

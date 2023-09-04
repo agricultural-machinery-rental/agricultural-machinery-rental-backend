@@ -21,7 +21,9 @@ class TestMachineryView(TestMachinaryFixture):
     def test_get_machineries_list(self):
         response = self.user2_client.get(reverse("machinery-list"))
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(len(response.data), len(Machinery.objects.all()))
+        self.assertEqual(
+            len(response.data), len(Machinery.objects.filter(available=True))
+        )
 
     def test_machineries_filter(self):
         response_1 = self.user_client.get(
@@ -31,7 +33,7 @@ class TestMachineryView(TestMachinaryFixture):
             len(response_1.data),
             len(
                 Machinery.objects.filter(
-                    machinery__mark__brand=self.brand_1.brand
+                    available=True, machinery__mark__brand=self.brand_1.brand
                 )
             ),
         )
@@ -43,7 +45,8 @@ class TestMachineryView(TestMachinaryFixture):
             len(response_2.data),
             len(
                 Machinery.objects.filter(
-                    machinery__work_type__slug=self.work_type_1.slug
+                    available=True,
+                    machinery__work_type__slug=self.work_type_1.slug,
                 )
             ),
         )
@@ -53,7 +56,9 @@ class TestMachineryView(TestMachinaryFixture):
         )
         self.assertEqual(
             len(response_3.data),
-            len(Machinery.objects.filter(machinery__category=1)),
+            len(
+                Machinery.objects.filter(available=True, machinery__category=1)
+            ),
         )
 
         response_4 = self.user_client.get(
@@ -79,6 +84,7 @@ class TestMachineryView(TestMachinaryFixture):
             len(response_5.data),
             len(
                 Machinery.objects.filter(
+                    available=True,
                     price_per_hour__gte=500.00,
                     price_per_hour__lte=1100.00,
                 )
@@ -96,6 +102,7 @@ class TestMachineryView(TestMachinaryFixture):
             len(response_6.data),
             len(
                 Machinery.objects.filter(
+                    available=True,
                     price_per_shift__gte=10000.00,
                     price_per_shift__lte=21000.00,
                 )
@@ -108,7 +115,9 @@ class TestMachineryView(TestMachinaryFixture):
         self.assertEqual(
             len(response_7.data),
             len(
-                Machinery.objects.filter(location__title=self.location_1.title)
+                Machinery.objects.filter(
+                    available=True, location__title=self.location_1.title
+                )
             ),
         )
 
@@ -119,10 +128,18 @@ class TestMachineryView(TestMachinaryFixture):
             len(response_8.data),
             len(
                 Machinery.objects.filter(
-                    location__region__title=self.region_1.title
+                    available=True, location__region__title=self.region_1.title
                 )
             ),
         )
+
+    def test_machineries_pagination(self):
+        limit = 1
+        response = self.user2_client.get(
+            reverse("machinery-list") + f"?limit={limit}&offset=0"
+        )
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertEqual(len(response.json()["results"]), limit)
 
 
 class TestMachineryBrandnameView(TestMachinaryFixture):
