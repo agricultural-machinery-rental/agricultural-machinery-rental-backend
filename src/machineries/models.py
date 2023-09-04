@@ -4,7 +4,7 @@ from django.db import models
 from core.choices_classes import Category
 from locations.models import Location
 
-from .managers import MachineryManager, MachineryInfoManager
+from machineries.managers import MachineryManager, MachineryInfoManager
 
 
 class MachineryBrandname(models.Model):
