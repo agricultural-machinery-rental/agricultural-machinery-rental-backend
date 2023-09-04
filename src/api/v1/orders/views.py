@@ -14,6 +14,7 @@ from api.v1.orders.serializers import (
     ReadReservationSerializer,
 )
 from core.choices_classes import ReservationStatusOptions
+from machineries.models import Machinery
 from orders.models import Reservation
 from api.v1.orders.permissions import IsOwner
 
@@ -44,6 +45,11 @@ class ReservationViewSet(
 
     def perform_create(self, serializer):
         serializer.save(renter=self.request.user)
+        machinery = Machinery.objects.get(
+            id=self.request.data.get("machinery")
+        )
+        machinery.count_orders += 1
+        machinery.save()
 
     def perform_update(self, serializer):
         serializer.save(renter=self.request.user)

@@ -84,6 +84,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(summary="Получить топ заказываемых машин", methods=["GET"])
     @action(
         detail=False,
         methods=("get",),
