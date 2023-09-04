@@ -109,6 +109,10 @@ class Machinery(models.Model):
     price_per_hour = models.DecimalField(
         verbose_name="Цена аренды в час", max_digits=7, decimal_places=2
     )
+    count_orders = models.PositiveIntegerField(
+        verbose_name="Количество заказов",
+        default=0,
+    )
 
     objects = MachineryManager()
 
