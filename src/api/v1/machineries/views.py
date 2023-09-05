@@ -101,6 +101,25 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         )
         return paginator.get_paginated_response(serializer.data)
 
+    @extend_schema(
+        summary="Получить список техники в избранном", methods=["GET"]
+    )
+    @action(
+        detail=False,
+        methods=("get",),
+        url_path="favorites",
+        permission_classes=(permissions.IsAuthenticated,),
+    )
+    def favorites(self, request):
+        current_user = request.user
+        paginator = LimitOffsetPagination()
+        queryset = Machinery.objects.filter(favorite__user=current_user)
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = MachinerySerializer(
+            result_page, many=True, context={"request": request}
+        )
+        return paginator.get_paginated_response(serializer.data)
+
 
 @extend_schema(tags=["WorkType"])
 @extend_schema_view(
