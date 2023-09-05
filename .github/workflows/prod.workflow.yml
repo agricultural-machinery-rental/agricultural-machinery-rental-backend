@@ -69,6 +69,7 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd ${{ secrets.TARGET_SERVER_PATH }}
+            docker-compose exec backend python3 manage.py dumpdata --indent 2 --exclude admin.logentry --exclude sessions.session > dump_$(date +%Y%m%d_%H%M).json
             docker-compose stop
             docker-compose rm -f backend
             docker rmi $(docker images '${{ secrets.DOCKER_HUB_USERNAME }}/amr' -q)
