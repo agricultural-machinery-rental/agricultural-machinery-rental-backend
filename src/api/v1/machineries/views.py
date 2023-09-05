@@ -5,6 +5,7 @@ from rest_framework import mixins, viewsets
 from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -83,6 +84,22 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             )
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(summary="Получить топ заказываемых машин", methods=["GET"])
+    @action(
+        detail=False,
+        methods=("get",),
+        url_path="top",
+        permission_classes=(AllowAny,),
+    )
+    def top(self, request):
+        paginator = LimitOffsetPagination()
+        queryset = Machinery.objects.order_by("-count_orders")
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = MachinerySerializer(
+            result_page, many=True, context={"request": request}
+        )
+        return paginator.get_paginated_response(serializer.data)
 
 
 @extend_schema(tags=["WorkType"])

@@ -94,6 +94,7 @@ class TestMachinaryFixture(TestLocationFixture, APITestCase):
             machinery=cls.machinary1_info,
             year_of_manufacture=2020,
             location=cls.location_1,
+            count_orders=999,
             mileage=1000,
             delivery_distance_km=100,
             price_per_shift=15000.00,

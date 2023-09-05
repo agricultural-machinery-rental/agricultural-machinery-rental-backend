@@ -4,7 +4,7 @@ from rest_framework import mixins, permissions, viewsets
 
 from locations.models import Location, Region
 
-from .serializers import LocationSerializer, RegionSerializer
+from api.v1.locations.serializers import LocationSerializer, RegionSerializer
 
 
 @extend_schema(tags=["Region"])

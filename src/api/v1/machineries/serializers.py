@@ -97,6 +97,7 @@ class MachinerySerializer(serializers.ModelSerializer):
             "is_favorited",
             "machinery",
             "images",
+            "count_orders",
         )
         model = Machinery
 

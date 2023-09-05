@@ -1,3 +1,5 @@
+from datetime import timedelta
+from django.utils import timezone
 from django.urls import reverse
 from http import HTTPStatus
 
@@ -172,3 +174,29 @@ class TestOrdersView(TestOrdersFixture):
             cancel_reservation4.status_code, HTTPStatus.BAD_REQUEST
         )
         self.assertEqual(cancel_reservation4.json(), answer)
+
+    def test_count_orders_updates(self):
+        machinery_before = self.user_client.get(
+            reverse("machinery-detail", kwargs={"pk": 1})
+        )
+
+        order_data = {
+            "number": "118899",
+            "machinery": 1,
+            "start_date": timezone.now() + timedelta(hours=180),
+            "end_date": timezone.now() + timedelta(hours=256),
+            "comment": "Нужно срочно!!",
+        }
+        self.user_client.post(
+            reverse("orders-list"),
+            data=order_data,
+        )
+
+        machinery_after = self.user_client.get(
+            reverse("machinery-detail", kwargs={"pk": 1})
+        )
+
+        self.assertEqual(
+            machinery_before.data["count_orders"] + 1,
+            machinery_after.data["count_orders"],
+        )

@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import LocationViewSet, RegionViewSet
+from api.v1.locations.views import LocationViewSet, RegionViewSet
 
 location_router = DefaultRouter()
 
