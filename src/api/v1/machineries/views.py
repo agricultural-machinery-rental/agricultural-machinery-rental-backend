@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework import mixins, viewsets
 from rest_framework import permissions
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -23,6 +22,7 @@ from machineries.models import (
     MachineryBrandname,
     WorkType,
 )
+from core.paginator import DefaultPagination
 
 
 @extend_schema(tags=["Machinery"])
@@ -45,7 +45,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MachineryFilter
-    pagination_class = LimitOffsetPagination
+    pagination_class = DefaultPagination
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
@@ -93,7 +93,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         permission_classes=(AllowAny,),
     )
     def top(self, request):
-        paginator = LimitOffsetPagination()
+        paginator = DefaultPagination()
         queryset = Machinery.objects.order_by("-count_orders")
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = MachinerySerializer(
@@ -112,7 +112,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     )
     def favorites(self, request):
         current_user = request.user
-        paginator = LimitOffsetPagination()
+        paginator = DefaultPagination()
         queryset = Machinery.objects.filter(favorite__user=current_user)
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = MachinerySerializer(

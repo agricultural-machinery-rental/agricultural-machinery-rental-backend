@@ -2,7 +2,9 @@ from django_filters import (
     ChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
+    OrderingFilter,
     RangeFilter,
+    TypedChoiceFilter,
 )
 
 from core.choices_classes import Category
@@ -16,6 +18,11 @@ from machineries.models import (
 
 
 class MachineryFilter(FilterSet):
+    BOOLEAN_CHOICES = (
+        (0, False),
+        (1, True),
+    )
+
     mark = ModelMultipleChoiceFilter(
         field_name="machinery__mark__brand",
         to_field_name="brand",
@@ -47,6 +54,17 @@ class MachineryFilter(FilterSet):
         field_name="machinery__category", choices=Category.choices
     )
 
+    ordering = OrderingFilter(
+        fields=(("-count_orders", "count_orders"),),
+        field_labels={
+            "count_orders": "count_orders",
+        },
+    )
+
+    is_favorited = TypedChoiceFilter(
+        choices=BOOLEAN_CHOICES, method="filter_is_favorited"
+    )
+
     class Meta:
         model = Machinery
         fields = [
@@ -58,4 +76,14 @@ class MachineryFilter(FilterSet):
             "price_per_hour",
             "mark",
             "price_per_shift",
+            "is_favorited",
+            "ordering",
         ]
+
+    def filter_is_favorited(self, queryset, name, value):
+        """Фильтрация по наличию в избранном."""
+
+        user = self.request.user
+        if value and not user.is_anonymous:
+            return queryset.filter(favorite__user=user)
+        return queryset
