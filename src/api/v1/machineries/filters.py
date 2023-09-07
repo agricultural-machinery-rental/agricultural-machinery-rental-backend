@@ -7,7 +7,7 @@ from django_filters import (
     TypedChoiceFilter,
 )
 
-from core.choices_classes import Category
+from core.choices_classes import BOOLEAN_CHOICES, Category
 from locations.models import Location, Region
 from machineries.models import (
     Machinery,
@@ -18,10 +18,7 @@ from machineries.models import (
 
 
 class MachineryFilter(FilterSet):
-    BOOLEAN_CHOICES = (
-        (0, False),
-        (1, True),
-    )
+    """Фильтры для экземпляров техники."""
 
     mark = ModelMultipleChoiceFilter(
         field_name="machinery__mark__brand",
@@ -55,9 +52,17 @@ class MachineryFilter(FilterSet):
     )
 
     ordering = OrderingFilter(
-        fields=(("-count_orders", "count_orders"),),
+        fields=(
+            ("-count_orders", "count_orders"),
+            ("-year_of_manufacture", "year_of_manufacture"),
+            ("price_per_shift", "price_per_shift"),
+            ("price_per_hour", "price_per_hour"),
+        ),
         field_labels={
             "count_orders": "count_orders",
+            "year_of_manufacture": "year_of_manufacture",
+            "price_per_shift": "price_per_shift",
+            "price_per_hour": "price_per_hour",
         },
     )
 
