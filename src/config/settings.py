@@ -86,7 +86,6 @@ else:
         }
     }
 
-
 AUTH_USER_MODEL = "users.User"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
@@ -107,6 +106,43 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+LOG_FILE = os.path.join(BASE_DIR, "../django.log")
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        "file": {
+            "level": "WARNING",
+            "class": "logging.FileHandler",
+            "filename": LOG_FILE,
+            "formatter": "main",
+        },
+    },
+    "formatters": {
+        "main": {
+            "format": " %(asctime)s, %(levelname)s,"
+                      " %(message)s, %(name)s, %(funcName)s,"
+                      " %(lineno)d,",
+        },
+        "simple": {
+            "format": "%(log_color)s%(levelname)s,"
+                      " %(message)s, %(name)s, %(funcName)s,",
+            "()": "colorlog.ColoredFormatter",
+        },
+    },
+    "loggers": {
+        "": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
 
 LANGUAGE_CODE = "ru-RU"
 
