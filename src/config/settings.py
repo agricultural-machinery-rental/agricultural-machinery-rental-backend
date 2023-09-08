@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "locations.apps.LocationsConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
+    "django_cron",
     "django_filters",
     "django_rest_passwordreset",
     "django_cleanup.apps.CleanupConfig",
@@ -169,3 +170,8 @@ SPECTACULAR_SETTINGS = {
         "filter": True,  # включить поиск по тегам
     },
 }
+
+CRON_CLASSES = [
+    "orders.StatusChangingJob",
+]
+DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 30
