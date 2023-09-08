@@ -4,10 +4,9 @@ from django_filters import (
     ModelMultipleChoiceFilter,
     OrderingFilter,
     RangeFilter,
-    TypedChoiceFilter,
 )
 
-from core.choices_classes import BOOLEAN_CHOICES, Category
+from core.choices_classes import Category
 from locations.models import Location, Region
 from machineries.models import (
     Machinery,
@@ -53,21 +52,21 @@ class MachineryFilter(FilterSet):
 
     ordering = OrderingFilter(
         fields=(
-            ("-count_orders", "count_orders"),
-            ("-year_of_manufacture", "year_of_manufacture"),
+            ("count_orders", "count_orders"),
+            ("year_of_manufacture", "year_of_manufacture"),
             ("price_per_shift", "price_per_shift"),
             ("price_per_hour", "price_per_hour"),
         ),
         field_labels={
-            "count_orders": "count_orders",
-            "year_of_manufacture": "year_of_manufacture",
-            "price_per_shift": "price_per_shift",
-            "price_per_hour": "price_per_hour",
+            "count_orders": "Количество заказов",
+            "-count_orders": "Количество заказов (по убыванию)",
+            "year_of_manufacture": "Год выпуска",
+            "-year_of_manufacture": "Год выпуска (по убыванию)",
+            "price_per_shift": "Цена за смену",
+            "-price_per_shift": "Цена за смену (по убыванию)",
+            "price_per_hour": "Цена за час",
+            "-price_per_hour": "Цена за час (по убыванию)",
         },
-    )
-
-    is_favorited = TypedChoiceFilter(
-        choices=BOOLEAN_CHOICES, method="filter_is_favorited"
     )
 
     class Meta:
@@ -81,8 +80,8 @@ class MachineryFilter(FilterSet):
             "price_per_hour",
             "mark",
             "price_per_shift",
-            "is_favorited",
-            "ordering",
+            "year_of_manufacture",
+            "count_orders",
         ]
 
     def filter_is_favorited(self, queryset, name, value):

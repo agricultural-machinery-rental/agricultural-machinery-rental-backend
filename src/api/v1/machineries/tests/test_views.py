@@ -141,16 +141,6 @@ class TestMachineryView(TestMachinaryFixture):
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(len(response.json()["results"]), limit)
 
-    def test_favorites_list(self):
-        response = self.user2_client.get(
-            reverse("machinery-favorites") + "?limit=1000000000"
-        )
-        self.assertEqual(response.status_code, HTTPStatus.OK)
-        self.assertEqual(
-            len(response.json()["results"]),
-            len(Machinery.objects.filter(favorite__user=self.user2)),
-        )
-
 
 class TestMachineryBrandnameView(TestMachinaryFixture):
     def test_get_brands_list(self):

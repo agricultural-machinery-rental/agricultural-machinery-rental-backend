@@ -24,9 +24,3 @@ class ReservationStatusOptions(models.IntegerChoices):
     CANCELLED = 2, "Отменен"
     AT_WORK = 3, "В работе"
     FINISHED = 4, "Завершен"
-
-
-BOOLEAN_CHOICES = (
-    (0, False),
-    (1, True),
-)

@@ -34,18 +34,29 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Вьюсет для техники.
     Обрабатываемые запросы: GET (list&detail).
-    Эндпоинты: /machineries/
+    Эндпоинты: /machineries/machinery/
     Фильтры по Категории (machinery__category), Локации(location),
         Цене аренды в час(price_per_hour), за смену(price_per_shift),
         Марке техники(machinery__mark), Модели техники(machinery__name),
-        Видам работ (machinery__work_type)
+        Видам работ (machinery__work_type).
+    При наличии query параметра "favorited" вывыводится список техники,
+     котрая у пользователя в избранном
     """
 
-    queryset = Machinery.objects.filter(available=True)
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MachineryFilter
     pagination_class = DefaultPagination
+
+    def get_queryset(self):
+        queryset = Machinery.objects.filter(available=True)
+        if self.request.method == "GET":
+            params = self.request.query_params
+            need_param = "favorited" in params
+            user = self.request.user
+            if need_param and not user.is_anonymous:
+                queryset = queryset.filter(favorite__user=user)
+        return queryset
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
@@ -95,25 +106,6 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     def top(self, request):
         paginator = DefaultPagination()
         queryset = Machinery.objects.order_by("-count_orders")
-        result_page = paginator.paginate_queryset(queryset, request)
-        serializer = MachinerySerializer(
-            result_page, many=True, context={"request": request}
-        )
-        return paginator.get_paginated_response(serializer.data)
-
-    @extend_schema(
-        summary="Получить список техники в избранном", methods=["GET"]
-    )
-    @action(
-        detail=False,
-        methods=("get",),
-        url_path="favorites",
-        permission_classes=(permissions.IsAuthenticated,),
-    )
-    def favorites(self, request):
-        current_user = request.user
-        paginator = DefaultPagination()
-        queryset = Machinery.objects.filter(favorite__user=current_user)
         result_page = paginator.paginate_queryset(queryset, request)
         serializer = MachinerySerializer(
             result_page, many=True, context={"request": request}
