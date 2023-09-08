@@ -77,20 +77,20 @@ class ReservationViewSet(
         current_time = datetime.now(timezone.utc)
         if reservation.status == ReservationStatusOptions.CANCELLED:
             return Response(
-                {"message": f"Такой резерв уже отменен!"},
+                {"message": "Такой резерв уже отменен!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if reservation.start_date < current_time + timedelta(hours=48):
             return Response(
                 {
-                    "message": f"Отмена невозможна! "
-                    f"Осталось менее 48 часов до начала резервации."
+                    "message": "Отмена невозможна! "
+                    "Осталось менее 48 часов до начала резервации."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         reservation.status = ReservationStatusOptions.CANCELLED
         reservation.save()
         return Response(
-            {"message": f"Резерв успешно отменен!"},
+            {"message": "Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,
         )

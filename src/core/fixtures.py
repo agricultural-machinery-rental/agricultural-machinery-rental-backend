@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase, APIClient
 
 from locations.models import Location, Region
 from machineries.models import (
+    Favorite,
     Machinery,
     MachineryBrandname,
     MachineryInfo,
@@ -119,6 +120,7 @@ class TestMachinaryFixture(TestLocationFixture, APITestCase):
             price_per_shift=25000.00,
             price_per_hour=5000.00,
         )
+        Favorite.objects.create(user=cls.user2, machinery=cls.machinary_2)
 
 
 class TestOrdersFixture(TestMachinaryFixture, APITestCase):
