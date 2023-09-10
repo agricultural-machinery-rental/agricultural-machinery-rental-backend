@@ -44,6 +44,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "config.middleware.request_log.RequestLogMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -107,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 LOG_FILE = os.path.join(BASE_DIR, "../django.log")
+REQUESTS_FILE = os.path.join(BASE_DIR, "../api_requests.log")
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -122,22 +124,28 @@ LOGGING = {
             "filename": LOG_FILE,
             "formatter": "main",
         },
+        "request": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": REQUESTS_FILE,
+            "formatter": "main",
+        },
     },
     "formatters": {
         "main": {
             "format": " %(asctime)s, %(levelname)s,"
-                      " %(message)s, %(name)s, %(funcName)s,"
-                      " %(lineno)d,",
+            " %(message)s, %(name)s, %(funcName)s,"
+            " %(lineno)d,",
         },
         "simple": {
             "format": "%(log_color)s%(levelname)s,"
-                      " %(message)s, %(name)s, %(funcName)s,",
+            " %(message)s, %(name)s, %(funcName)s,",
             "()": "colorlog.ColoredFormatter",
         },
     },
     "loggers": {
         "": {
-            "handlers": ["console", "file"],
+            "handlers": ["console", "file", "request"],
             "level": "DEBUG",
             "propagate": True,
         },
