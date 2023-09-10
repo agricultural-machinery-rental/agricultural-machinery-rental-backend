@@ -1,3 +1,5 @@
+import logging
+
 from datetime import datetime
 from datetime import timedelta
 from datetime import timezone
@@ -18,6 +20,8 @@ from machineries.models import Machinery
 from orders.models import Reservation
 from api.v1.orders.permissions import IsOwner
 
+logger = logging.getLogger(__name__)
+
 
 @extend_schema(tags=["Orders"])
 @extend_schema_view(
@@ -36,6 +40,7 @@ class ReservationViewSet(
     permission_classes = (IsOwner,)
 
     def get_queryset(self):
+        logger.info("Запрос на получение списка резервирований")
         return Reservation.objects.filter(renter=self.request.user)
 
     def get_serializer_class(self):
@@ -72,15 +77,18 @@ class ReservationViewSet(
         """
         Отмена резервирования пользователем.
         """
+        logger.info("Запрос на отмену резервирования")
         reservation = get_object_or_404(Reservation, pk=kwargs["pk"])
         self.check_object_permissions(self.request, reservation)
         current_time = datetime.now(timezone.utc)
         if reservation.status == ReservationStatusOptions.CANCELLED:
+            logger.warning("Резерв уже отменен")
             return Response(
                 {"message": f"Такой резерв уже отменен!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if reservation.start_date < current_time + timedelta(hours=48):
+            logger.warning("Отмена резервации невозможна")
             return Response(
                 {
                     "message": f"Отмена невозможна! "
@@ -90,6 +98,7 @@ class ReservationViewSet(
             )
         reservation.status = ReservationStatusOptions.CANCELLED
         reservation.save()
+        logger.info("Резерв успешно отменен")
         return Response(
             {"message": f"Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,

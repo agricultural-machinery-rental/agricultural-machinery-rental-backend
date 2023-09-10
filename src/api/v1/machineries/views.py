@@ -111,7 +111,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = MachinerySerializer(
             result_page, many=True, context={"request": request}
         )
-        logger.info("Запрос на получение топовых объектов")
+        logger.info("Запрос на получение популярных объектов")
         return paginator.get_paginated_response(serializer.data)
 
 
