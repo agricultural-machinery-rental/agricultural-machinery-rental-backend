@@ -12,3 +12,4 @@ class Limits(IntEnum):
     LENGTH_INN = 12
     MIN_LENGTH_PASS = 8
     MAX_LENGTH_PASS = 25
+    LENGTH_ORDER_NUMBER = 6

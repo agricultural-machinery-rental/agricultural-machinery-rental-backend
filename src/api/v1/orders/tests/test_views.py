@@ -21,7 +21,6 @@ class TestOrdersView(TestOrdersFixture):
 
     def test_create_order(self):
         order_data = {
-            "number": "2",
             "machinery": 2,
             "start_date": "2123-08-16T11:33:16.029352+03:00",
             "end_date": "2123-08-17T11:32:16.029352+03:00",
@@ -32,13 +31,15 @@ class TestOrdersView(TestOrdersFixture):
         )
         self.assertEqual(response.status_code, HTTPStatus.CREATED)
         self.assertTrue(
-            Reservation.objects.filter(number="2", machinery_id=2).exists()
+            Reservation.objects.filter(
+                number=response.data["number"],
+                machinery_id=response.data["machinery"],
+            ).exists()
         )
 
     def test_existing_reservations(self):
         # Создаем заказ
         order_data = {
-            "number": "2",
             "machinery": 2,
             "start_date": "2123-08-14T11:33:16.029352+03:00",
             "end_date": "2123-08-20T11:32:16.029352+03:00",
@@ -50,7 +51,6 @@ class TestOrdersView(TestOrdersFixture):
         # Проверка: start_date нового заказа больше чем у созданного
         # end_date одинаковы
         order_data_2 = {
-            "number": "3",
             "machinery": 2,
             "start_date": "2123-07-16T11:33:16.029352+03:00",
             "end_date": "2123-08-20T11:32:16.029352+03:00",
@@ -64,7 +64,6 @@ class TestOrdersView(TestOrdersFixture):
         # Проверка: end_date нового заказа меньше чем у созданного
         # start_date одинаковы
         order_data_3 = {
-            "number": "4",
             "machinery": 2,
             "start_date": "2123-08-14T11:33:16.029352+03:00",
             "end_date": "2123-08-21T11:32:16.029352+03:00",
@@ -78,7 +77,6 @@ class TestOrdersView(TestOrdersFixture):
         # Проверка: end_date нового заказа меньше чем у созданного
         # и start_date нового заказа больше чем у созданного
         order_data_4 = {
-            "number": "5",
             "machinery": 2,
             "start_date": "2123-08-15T11:33:16.029352+03:00",
             "end_date": "2123-08-19T11:32:16.029352+03:00",
@@ -91,7 +89,6 @@ class TestOrdersView(TestOrdersFixture):
 
         # Проверка: создаем еще один заказ до созданного
         order_data_5 = {
-            "number": "6",
             "machinery": 2,
             "start_date": "2123-08-10T11:33:16.029352+03:00",
             "end_date": "2123-08-13T11:32:16.029352+03:00",
@@ -104,7 +101,6 @@ class TestOrdersView(TestOrdersFixture):
 
         # Проверка: создаем еще один заказ после созданного первоначально
         order_data_6 = {
-            "number": "7",
             "machinery": 2,
             "start_date": "2123-08-21T11:33:16.029352+03:00",
             "end_date": "2123-08-22T11:32:16.029352+03:00",
@@ -118,7 +114,6 @@ class TestOrdersView(TestOrdersFixture):
     def test_changing_reservation(self):
         # Проверка метода PATCH
         order_data = {
-            "number": "10",
             "start_date": "2123-08-21T11:33:16.029352+03:00",
             "end_date": "2123-08-22T11:32:16.029352+03:00",
             "comment": "Комментарий",
@@ -131,7 +126,6 @@ class TestOrdersView(TestOrdersFixture):
         self.assertEqual(response.data["comment"], order_data["comment"])
         # Проверка метода PUT
         order_data = {
-            "number": "10",
             "machinery": 1,
             "start_date": "2123-08-21T11:33:16.029352+03:00",
             "end_date": "2123-08-22T11:32:16.029352+03:00",
@@ -181,7 +175,6 @@ class TestOrdersView(TestOrdersFixture):
         )
 
         order_data = {
-            "number": "118899",
             "machinery": 1,
             "start_date": timezone.now() + timedelta(hours=180),
             "end_date": timezone.now() + timedelta(hours=256),
