@@ -175,3 +175,5 @@ CRON_CLASSES = [
     "orders.StatusChangingJob",
 ]
 DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 30
+
+PREFIX_ORDER_NUMBER = "AG"
