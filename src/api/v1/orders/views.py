@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins, viewsets
 from rest_framework import status
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from api.v1.orders.serializers import (
@@ -14,6 +14,7 @@ from api.v1.orders.serializers import (
     ReadReservationSerializer,
 )
 from core.choices_classes import ReservationStatusOptions
+from machineries.models import Machinery
 from orders.models import Reservation
 from api.v1.orders.permissions import IsOwner
 
@@ -44,6 +45,11 @@ class ReservationViewSet(
 
     def perform_create(self, serializer):
         serializer.save(renter=self.request.user)
+        machinery = Machinery.objects.get(
+            id=self.request.data.get("machinery")
+        )
+        machinery.count_orders += 1
+        machinery.save()
 
     def perform_update(self, serializer):
         serializer.save(renter=self.request.user)
@@ -71,20 +77,20 @@ class ReservationViewSet(
         current_time = datetime.now(timezone.utc)
         if reservation.status == ReservationStatusOptions.CANCELLED:
             return Response(
-                {"message": f"Такой резерв уже отменен!"},
+                {"message": "Такой резерв уже отменен!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if reservation.start_date < current_time + timedelta(hours=48):
             return Response(
                 {
-                    "message": f"Отмена невозможна! "
-                    f"Осталось менее 48 часов до начала резервации."
+                    "message": "Отмена невозможна! "
+                    "Осталось менее 48 часов до начала резервации."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         reservation.status = ReservationStatusOptions.CANCELLED
         reservation.save()
         return Response(
-            {"message": f"Резерв успешно отменен!"},
+            {"message": "Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,
         )

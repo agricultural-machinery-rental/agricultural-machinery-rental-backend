@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase, APIClient
 
 from locations.models import Location, Region
 from machineries.models import (
+    Favorite,
     Machinery,
     MachineryBrandname,
     MachineryInfo,
@@ -94,6 +95,7 @@ class TestMachinaryFixture(TestLocationFixture, APITestCase):
             machinery=cls.machinary1_info,
             year_of_manufacture=2020,
             location=cls.location_1,
+            count_orders=999,
             mileage=1000,
             delivery_distance_km=100,
             price_per_shift=15000.00,
@@ -118,6 +120,7 @@ class TestMachinaryFixture(TestLocationFixture, APITestCase):
             price_per_shift=25000.00,
             price_per_hour=5000.00,
         )
+        Favorite.objects.create(user=cls.user2, machinery=cls.machinary_2)
 
 
 class TestOrdersFixture(TestMachinaryFixture, APITestCase):
@@ -125,28 +128,24 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.reservation1 = Reservation.objects.create(
-            number="1",
             machinery=cls.machinary_1,
             renter=cls.user,
             start_date=timezone.now() + timedelta(minutes=1),
             end_date=timezone.now() + timedelta(hours=24),
         )
         cls.reservation2 = Reservation.objects.create(
-            number="10",
             machinery=cls.machinary_2,
             renter=cls.user,
             start_date="2123-08-26T11:33:16.029352+03:00",
             end_date="2123-08-27T11:32:16.029352+03:00",
         )
         cls.reservation3 = Reservation.objects.create(
-            number="10",
             machinery=cls.machinary_2,
             renter=cls.user,
             start_date="2123-08-18T11:33:16.029352+03:00",
             end_date="2123-08-18T12:32:16.029352+03:00",
         )
         cls.reservation4 = Reservation.objects.create(
-            number="11",
             machinery=cls.machinary_1,
             renter=cls.user,
             start_date=timezone.now() + timedelta(hours=47),

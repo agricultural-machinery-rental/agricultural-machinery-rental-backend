@@ -18,6 +18,7 @@ class AdminMachinery(admin.ModelAdmin):
         "year_of_manufacture",
         "location",
         "available",
+        "count_orders",
     )
 
 

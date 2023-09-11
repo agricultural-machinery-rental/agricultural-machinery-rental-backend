@@ -1,6 +1,6 @@
 from django.db import models
 
-from .managers import LocationManager
+from locations.managers import LocationManager
 
 
 class Region(models.Model):

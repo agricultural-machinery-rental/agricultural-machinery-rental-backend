@@ -15,12 +15,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
-
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Суперпользователь должен иметь is_staff=True")
 
         if extra_fields.get("is_superuser") is not True:
             raise ValueError(
@@ -31,6 +27,8 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("first_name", first_name)
         last_name = input("Введите фамилию: ")
         extra_fields.setdefault("last_name", last_name)
+        phone_number = input("Введите номер телефона: ")
+        extra_fields.setdefault("phone_number", phone_number)
         extra_fields.setdefault("role", Role.ADMIN)
 
         return self.create_user(email, password, **extra_fields)

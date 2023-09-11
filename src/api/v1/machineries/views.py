@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework import mixins, viewsets
 from rest_framework import permissions
 from rest_framework.decorators import action
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -22,6 +22,7 @@ from machineries.models import (
     MachineryBrandname,
     WorkType,
 )
+from core.paginator import DefaultPagination
 
 
 @extend_schema(tags=["Machinery"])
@@ -33,18 +34,29 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Вьюсет для техники.
     Обрабатываемые запросы: GET (list&detail).
-    Эндпоинты: /machineries/
+    Эндпоинты: /machineries/machinery/
     Фильтры по Категории (machinery__category), Локации(location),
         Цене аренды в час(price_per_hour), за смену(price_per_shift),
         Марке техники(machinery__mark), Модели техники(machinery__name),
-        Видам работ (machinery__work_type)
+        Видам работ (machinery__work_type).
+    При наличии query параметра "favorited" вывыводится список техники,
+     котрая у пользователя в избранном
     """
 
-    queryset = Machinery.objects.filter(available=True)
     serializer_class = MachinerySerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = MachineryFilter
-    pagination_class = LimitOffsetPagination
+    pagination_class = DefaultPagination
+
+    def get_queryset(self):
+        queryset = Machinery.objects.filter(available=True)
+        if self.request.method == "GET":
+            params = self.request.query_params
+            need_param = "favorited" in params
+            user = self.request.user
+            if need_param and not user.is_anonymous:
+                queryset = queryset.filter(favorite__user=user)
+        return queryset
 
     @extend_schema(summary="Отметить как избранное", methods=["POST"])
     @extend_schema(summary="Исключить из избранного", methods=["DELETE"])
@@ -83,6 +95,22 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             )
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @extend_schema(summary="Получить топ заказываемых машин", methods=["GET"])
+    @action(
+        detail=False,
+        methods=("get",),
+        url_path="top",
+        permission_classes=(AllowAny,),
+    )
+    def top(self, request):
+        paginator = DefaultPagination()
+        queryset = Machinery.objects.order_by("-count_orders")
+        result_page = paginator.paginate_queryset(queryset, request)
+        serializer = MachinerySerializer(
+            result_page, many=True, context={"request": request}
+        )
+        return paginator.get_paginated_response(serializer.data)
 
 
 @extend_schema(tags=["WorkType"])
