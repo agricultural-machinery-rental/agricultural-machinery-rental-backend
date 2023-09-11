@@ -11,7 +11,7 @@ class StatusChangingJob(CronJobBase):
     Присваивает заказам статусы 'В работе' и 'Завершен'.
     """
 
-    shedule = Schedule(run_every_mins=50, retry_after_failure_mins=5)
+    schedule = Schedule(run_every_mins=50, retry_after_failure_mins=5)
     code = "orders.status_changing_job"
 
     def do(self):
