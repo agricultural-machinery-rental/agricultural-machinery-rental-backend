@@ -2,6 +2,7 @@ from django_filters import (
     ChoiceFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
+    OrderingFilter,
     RangeFilter,
 )
 
@@ -16,6 +17,8 @@ from machineries.models import (
 
 
 class MachineryFilter(FilterSet):
+    """Фильтры для экземпляров техники."""
+
     mark = ModelMultipleChoiceFilter(
         field_name="machinery__mark__brand",
         to_field_name="brand",
@@ -47,6 +50,25 @@ class MachineryFilter(FilterSet):
         field_name="machinery__category", choices=Category.choices
     )
 
+    ordering = OrderingFilter(
+        fields=(
+            ("count_orders", "count_orders"),
+            ("year_of_manufacture", "year_of_manufacture"),
+            ("price_per_shift", "price_per_shift"),
+            ("price_per_hour", "price_per_hour"),
+        ),
+        field_labels={
+            "count_orders": "Количество заказов",
+            "-count_orders": "Количество заказов (по убыванию)",
+            "year_of_manufacture": "Год выпуска",
+            "-year_of_manufacture": "Год выпуска (по убыванию)",
+            "price_per_shift": "Цена за смену",
+            "-price_per_shift": "Цена за смену (по убыванию)",
+            "price_per_hour": "Цена за час",
+            "-price_per_hour": "Цена за час (по убыванию)",
+        },
+    )
+
     class Meta:
         model = Machinery
         fields = [
@@ -58,4 +80,14 @@ class MachineryFilter(FilterSet):
             "price_per_hour",
             "mark",
             "price_per_shift",
+            "year_of_manufacture",
+            "count_orders",
         ]
+
+    def filter_is_favorited(self, queryset, name, value):
+        """Фильтрация по наличию в избранном."""
+
+        user = self.request.user
+        if value and not user.is_anonymous:
+            return queryset.filter(favorite__user=user)
+        return queryset

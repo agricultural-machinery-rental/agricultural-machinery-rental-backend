@@ -1,10 +1,11 @@
 from django.contrib.auth import settings
 from django.db import models
+from django.utils import timezone
 
+from config.settings import PREFIX_ORDER_NUMBER
 from core.choices_classes import ReservationStatusOptions
 from core.enums import Limits
 from machineries.models import Machinery
-
 from orders.managers import ReservationManagger
 
 
@@ -13,7 +14,11 @@ class Reservation(models.Model):
     Описание модели резервирования техники.
     """
 
-    number = models.CharField("Номер заказа", max_length=30, default=1)
+    number = models.CharField(
+        verbose_name="Номер заказа",
+        max_length=12,
+        unique=True,
+    )
     machinery = models.ForeignKey(
         Machinery,
         verbose_name="Техника",
@@ -66,4 +71,37 @@ class Reservation(models.Model):
         verbose_name_plural = "Резервирования"
 
     def __str__(self):
-        return f"{self.machinery} в резерве у {self.renter}"
+        return f"{self.number} | {self.machinery} в резерве у {self.renter}"
+
+    def _generation_number(self) -> str:
+        """
+        Генерация номера заказа.
+        Пример: AG2023000123.
+        (AG - префикс, 2023 - год, 000123 - номер).
+        """
+
+        prefix: str = PREFIX_ORDER_NUMBER
+        number_length: int = Limits.LENGTH_ORDER_NUMBER.value
+
+        year: str = timezone.now().strftime("%Y")
+        orders = Reservation.objects.filter(
+            number__regex=r"^%s%s[0-9]+" % (prefix, year)
+        )
+
+        last_number: int = (
+            orders.order_by("-number").values_list("number", flat=True).first()
+        )
+        last_number: int = (
+            int(last_number[len(prefix) + len(year) :]) if last_number else 0
+        )
+
+        number: int = last_number + 1
+        zeros: str = (number_length - len(str(number))) * "0"
+        return "{prefix}{year}{number}".format(
+            prefix=prefix, year=year, number=zeros + str(number)
+        )
+
+    def save(self, *args, **kwargs):
+        if not self.number:
+            self.number = self._generation_number()
+        super(Reservation, self).save(*args, **kwargs)

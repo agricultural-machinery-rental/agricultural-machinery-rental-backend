@@ -84,15 +84,15 @@ class ReservationViewSet(
         if reservation.status == ReservationStatusOptions.CANCELLED:
             logger.warning("Резерв уже отменен")
             return Response(
-                {"message": f"Такой резерв уже отменен!"},
+                {"message": "Такой резерв уже отменен!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if reservation.start_date < current_time + timedelta(hours=48):
             logger.warning("Отмена резервации невозможна")
             return Response(
                 {
-                    "message": f"Отмена невозможна! "
-                    f"Осталось менее 48 часов до начала резервации."
+                    "message": "Отмена невозможна! "
+                    "Осталось менее 48 часов до начала резервации."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -100,6 +100,6 @@ class ReservationViewSet(
         reservation.save()
         logger.info("Резерв успешно отменен")
         return Response(
-            {"message": f"Резерв успешно отменен!"},
+            {"message": "Резерв успешно отменен!"},
             status=status.HTTP_204_NO_CONTENT,
         )

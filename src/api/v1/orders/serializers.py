@@ -20,7 +20,6 @@ class CreateReservationSerializer(serializers.ModelSerializer):
 
     class Meta:
         fields = (
-            "number",
             "machinery",
             "start_date",
             "end_date",
@@ -61,6 +60,11 @@ class CreateReservationSerializer(serializers.ModelSerializer):
         self.validate(validated_data)
         instance = super().update(instance, validated_data)
         return instance
+
+    def to_representation(self, instance):
+        return ReadReservationSerializer(
+            instance, context={"request": self.context.get("request")}
+        ).data
 
 
 class ReadReservationSerializer(serializers.ModelSerializer):

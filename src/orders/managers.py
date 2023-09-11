@@ -1,4 +1,3 @@
-from typing import Any
 from django.db import models
 
 
@@ -7,10 +6,14 @@ class ReservationManagger(models.Manager):
     Менеджер для модели резервирования техники.
     """
 
-    def get(self, *args: Any, **kwargs: Any) -> Any:
+    def get_queryset(self):
         return (
-            super().select_related("machinery", "renter").get(*args, **kwargs)
+            super()
+            .get_queryset()
+            .select_related(
+                "renter",
+                "machinery",
+                "machinery__machinery",
+                "machinery__location",
+            )
         )
-
-    def all(self):
-        return super().select_related("machinery", "renter").all()

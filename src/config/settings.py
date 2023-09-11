@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "locations.apps.LocationsConfig",
     "rest_framework_simplejwt",
     "phonenumber_field",
+    "django_cron",
     "django_filters",
     "django_rest_passwordreset",
     "django_cleanup.apps.CleanupConfig",
@@ -176,8 +177,6 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "PAGE_SIZE": 20,
-    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
 }
 
 SIMPLE_JWT = {
@@ -215,3 +214,10 @@ SPECTACULAR_SETTINGS = {
         "filter": True,  # включить поиск по тегам
     },
 }
+
+CRON_CLASSES = [
+    "orders.StatusChangingJob",
+]
+DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 30
+
+PREFIX_ORDER_NUMBER = "AG"

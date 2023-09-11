@@ -28,5 +28,5 @@ class MachineryManager(models.Manager):
             .select_related(
                 "machinery", "machinery__mark", "location", "location__region"
             )
-            .prefetch_related("machinery__work_type")
+            .prefetch_related("machinery__work_type", "images_machinery")
         )
