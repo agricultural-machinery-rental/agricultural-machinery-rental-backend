@@ -216,7 +216,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 CRON_CLASSES = [
-    "orders.StatusChangingJob",
+    "orders.cron.StatusChangingJob",
 ]
 DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 30
 
