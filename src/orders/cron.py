@@ -19,7 +19,7 @@ class StatusChangingJob(CronJobBase):
             status=ReservationStatusOptions.CREATED
         )
         for reservation in created_reservations:
-            if reservation.start_date > timezone.now():
+            if reservation.start_date < timezone.now():
                 reservation.status = ReservationStatusOptions.CANCELLED
                 reservation.save()
 
@@ -27,7 +27,7 @@ class StatusChangingJob(CronJobBase):
             status=ReservationStatusOptions.AT_WORK
         )
         for reservation in ongoing_reservations:
-            if reservation.end_date > timezone.now():
+            if reservation.end_date < timezone.now():
                 reservation.status = ReservationStatusOptions.FINISHED
                 reservation.save()
 
@@ -35,9 +35,9 @@ class StatusChangingJob(CronJobBase):
             status=ReservationStatusOptions.CONFIRMED
         )
         for reservation in confirmed_reservations:
-            if reservation.end_date > timezone.now():
+            if reservation.end_date < timezone.now():
                 reservation.status = ReservationStatusOptions.FINISHED
                 reservation.save()
-            if reservation.start_date > timezone.now():
+            if reservation.start_date < timezone.now():
                 reservation.status = ReservationStatusOptions.AT_WORK
                 reservation.save()

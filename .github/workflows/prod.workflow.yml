@@ -75,4 +75,4 @@ jobs:
             docker rmi $(docker images '${{ secrets.DOCKER_HUB_USERNAME }}/amr' -q)
             docker-compose up -d
             docker-compose exec backend python manage.py migrate
-            docker-compose exec backend */50 * * * * python manage.py runcrons
+            docker-compose exec backend python manage.py runcrons
