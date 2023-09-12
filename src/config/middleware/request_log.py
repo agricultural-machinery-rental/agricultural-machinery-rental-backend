@@ -12,14 +12,13 @@ class RequestLogMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+
         log_data = {
             "remote_address": request.META["REMOTE_ADDR"],
             "server_hostname": socket.gethostname(),
             "request_method": request.method,
             "request_path": request.get_full_path(),
         }
-        if "/api/" in request.get_full_path():
-            json.loads(request.body.decode("utf-8"))
 
         response = self.get_response(request)
 

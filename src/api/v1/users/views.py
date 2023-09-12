@@ -131,6 +131,8 @@ def set_password(request):
         logger.info("Пароль успешно изменен")
         return Response(status=status.HTTP_204_NO_CONTENT)
     logger.warning(
+        f"Пользователь: {request.user.email} ,"
+        f"Метод запроса: {request.method} ,"
         f"Неверные данные для изменения пароля - {serializer.errors}"
     )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

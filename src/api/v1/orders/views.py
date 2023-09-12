@@ -82,13 +82,21 @@ class ReservationViewSet(
         self.check_object_permissions(self.request, reservation)
         current_time = datetime.now(timezone.utc)
         if reservation.status == ReservationStatusOptions.CANCELLED:
-            logger.warning("Резерв уже отменен")
+            logger.warning(
+                f"Пользователь: {request.user.email} ,"
+                f"Метод запроса: {request.method} ,"
+                f"Резерв уже отменен"
+            )
             return Response(
                 {"message": "Такой резерв уже отменен!"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if reservation.start_date < current_time + timedelta(hours=48):
-            logger.warning("Отмена резервации невозможна")
+            logger.warning(
+                f"Пользователь: {request.user.email} ,"
+                f"Метод запроса: {request.method} ,"
+                f"Отмена резервации невозможна"
+            )
             return Response(
                 {
                     "message": "Отмена невозможна! "

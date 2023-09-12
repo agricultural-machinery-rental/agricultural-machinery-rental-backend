@@ -78,7 +78,9 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         if request.method == "POST":
             if queryset.exists():
                 logger.warning(
-                    "Попытка повторного добавления объекта в избранное"
+                    f"Пользователь: {request.user.email} ,"
+                    f"Метод запроса: {request.method} ,"
+                    f"Попытка повторного добавления объекта в избранное"
                 )
                 return Response(
                     {
@@ -95,7 +97,9 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not queryset:
             logger.warning(
-                "Попытка удаления отсутствующего объекта из избранного"
+                f"Пользователь: {request.user.email} ,"
+                f"Метод запроса: {request.method} ,"
+                f"Попытка удаления отсутствующего объекта из избранного"
             )
             return Response(
                 {
