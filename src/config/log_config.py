@@ -30,12 +30,12 @@ LOGGING = {
     "formatters": {
         "main": {
             "format": " %(asctime)s, %(levelname)s,"
-                      " %(message)s, %(name)s, %(funcName)s,"
-                      " %(lineno)d,",
+            " %(message)s, %(name)s, %(funcName)s,"
+            " %(lineno)d,",
         },
         "simple": {
             "format": "%(log_color)s%(levelname)s,"
-                      " %(message)s, %(name)s, %(funcName)s,",
+            " %(message)s, %(name)s, %(funcName)s,",
             "()": "colorlog.ColoredFormatter",
         },
     },
