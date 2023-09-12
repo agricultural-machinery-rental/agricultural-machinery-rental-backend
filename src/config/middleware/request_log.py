@@ -1,5 +1,4 @@
 import socket
-import json
 import logging
 
 request_logger = logging.getLogger(__name__)
