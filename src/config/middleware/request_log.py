@@ -11,7 +11,6 @@ class RequestLogMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-
         log_data = {
             "remote_address": request.META["REMOTE_ADDR"],
             "server_hostname": socket.gethostname(),
