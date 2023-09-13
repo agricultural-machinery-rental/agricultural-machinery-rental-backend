@@ -4,7 +4,10 @@ from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
-from .log_config import *
+
+from config import log_config
+
+LOGGING = log_config.LOGGING
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -67,8 +70,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = "config.wsgi.application"
 
 if "test" in sys.argv:
     DATABASES = {
