@@ -172,8 +172,10 @@ class TestOrdersView(TestOrdersFixture):
             reverse("orders-cancel", kwargs={"pk": self.reservation4.id})
         )
         answer = {
-            "message": ("Отмена невозможна! Осталось менее"
-                        " 48 часов до начала резервации.")
+            "message": (
+                "Отмена невозможна! Осталось менее"
+                " 48 часов до начала резервации."
+            )
         }
         self.assertEqual(
             cancel_reservation4.status_code, HTTPStatus.BAD_REQUEST
