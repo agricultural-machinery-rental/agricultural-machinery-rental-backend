@@ -5,6 +5,10 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from config import log_config
+
+LOGGING = log_config.LOGGING
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 dotenv_path = os.path.join(os.path.dirname(__file__), "../../.env")
@@ -45,6 +49,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "config.middleware.request_log.RequestLogMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -86,7 +91,6 @@ else:
             "PORT": os.getenv("POSTGRES_PORT", "5432"),
         }
     }
-
 
 AUTH_USER_MODEL = "users.User"
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None

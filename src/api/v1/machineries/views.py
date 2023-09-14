@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
@@ -23,6 +25,8 @@ from machineries.models import (
     WorkType,
 )
 from core.paginator import DefaultPagination
+
+logger = logging.getLogger(__name__)
 
 
 @extend_schema(tags=["Machinery"])
@@ -73,6 +77,11 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         )
         if request.method == "POST":
             if queryset.exists():
+                logger.warning(
+                    f"Пользователь: {request.user.email} ,"
+                    f"Метод запроса: {request.method} ,"
+                    f"Попытка повторного добавления объекта в избранное"
+                )
                 return Response(
                     {
                         "message": f"Такой объект уже добавлен в "
@@ -84,8 +93,14 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
                 machinery, context={"request": request}
             )
             Favorite.objects.create(user=request.user, machinery=machinery)
+            logger.info("Объект успешно добавлен в избранное")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         if not queryset:
+            logger.warning(
+                f"Пользователь: {request.user.email} ,"
+                f"Метод запроса: {request.method} ,"
+                f"Попытка удаления отсутствующего объекта из избранного"
+            )
             return Response(
                 {
                     "message": f"Такой объект отсутствует в "
@@ -94,6 +109,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         queryset.delete()
+        logger.info("Объект успешно удален из избранного")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(summary="Получить топ заказываемых машин", methods=["GET"])
@@ -110,6 +126,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = MachinerySerializer(
             result_page, many=True, context={"request": request}
         )
+        logger.info("Запрос на получение популярных объектов")
         return paginator.get_paginated_response(serializer.data)
 
 
