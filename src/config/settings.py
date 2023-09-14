@@ -17,7 +17,10 @@ if os.path.exists(dotenv_path):
 
 SECRET_KEY = os.getenv("SECRET_KEY", "40r-my-5&cr&+k#y")
 DEBUG = True if os.getenv("DEBUG") == "YES" else False
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(", ")
+if "test" in sys.argv:
+    ALLOWED_HOSTS = ["testserver"]
+else:
+    ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(", ")
 CSRF_TRUSTED_ORIGINS = [os.getenv("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1")]
 
 INSTALLED_APPS = [
