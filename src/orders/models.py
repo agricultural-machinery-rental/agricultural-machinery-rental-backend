@@ -92,7 +92,7 @@ class Reservation(models.Model):
             orders.order_by("-number").values_list("number", flat=True).first()
         )
         last_number: int = (
-            int(last_number[len(prefix) + len(year) :]) if last_number else 0
+            int(last_number[len(prefix) + len(year):]) if last_number else 0
         )
 
         number: int = last_number + 1

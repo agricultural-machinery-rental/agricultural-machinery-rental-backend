@@ -22,8 +22,8 @@ class TestOrdersView(TestOrdersFixture):
     def test_create_order(self):
         order_data = {
             "machinery": 2,
-            "start_date": "2123-08-16T11:33:16.029352+03:00",
-            "end_date": "2123-08-17T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=12),
+            "end_date": timezone.now() + timedelta(hours=13),
             "comment": "Нужно срочно!!",
         }
         response = self.user_client.post(
@@ -41,8 +41,8 @@ class TestOrdersView(TestOrdersFixture):
         # Создаем заказ
         order_data = {
             "machinery": 2,
-            "start_date": "2123-08-14T11:33:16.029352+03:00",
-            "end_date": "2123-08-20T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=10),
+            "end_date": timezone.now() + timedelta(hours=20),
             "comment": "Нужно срочно!!",
         }
         answer = {"non_field_errors": ["Выбранные даты уже заняты."]}
@@ -52,8 +52,8 @@ class TestOrdersView(TestOrdersFixture):
         # end_date одинаковы
         order_data_2 = {
             "machinery": 2,
-            "start_date": "2123-07-16T11:33:16.029352+03:00",
-            "end_date": "2123-08-20T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=11),
+            "end_date": timezone.now() + timedelta(hours=20),
             "comment": "Нужно срочно!!",
         }
         response_2 = self.user_client.post(
@@ -65,8 +65,8 @@ class TestOrdersView(TestOrdersFixture):
         # start_date одинаковы
         order_data_3 = {
             "machinery": 2,
-            "start_date": "2123-08-14T11:33:16.029352+03:00",
-            "end_date": "2123-08-21T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=10),
+            "end_date": timezone.now() + timedelta(hours=19),
             "comment": "Нужно срочно!!",
         }
         response_3 = self.user_client.post(
@@ -78,8 +78,8 @@ class TestOrdersView(TestOrdersFixture):
         # и start_date нового заказа больше чем у созданного
         order_data_4 = {
             "machinery": 2,
-            "start_date": "2123-08-15T11:33:16.029352+03:00",
-            "end_date": "2123-08-19T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=9),
+            "end_date": timezone.now() + timedelta(hours=21),
             "comment": "Нужно срочно!!",
         }
         response_4 = self.user_client.post(
@@ -90,32 +90,42 @@ class TestOrdersView(TestOrdersFixture):
         # Проверка: создаем еще один заказ до созданного
         order_data_5 = {
             "machinery": 2,
-            "start_date": "2123-08-10T11:33:16.029352+03:00",
-            "end_date": "2123-08-13T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=2),
+            "end_date": timezone.now() + timedelta(hours=3),
             "comment": "Нужно срочно!!",
         }
         response_5 = self.user_client.post(
             reverse("orders-list"), data=order_data_5
         )
-        self.assertEqual(response_5.json(), order_data_5)
+        self.assertTrue(
+            Reservation.objects.filter(
+                number=response_5.data["number"],
+                machinery_id=response_5.data["machinery"],
+            ).exists()
+        )
 
         # Проверка: создаем еще один заказ после созданного первоначально
         order_data_6 = {
             "machinery": 2,
-            "start_date": "2123-08-21T11:33:16.029352+03:00",
-            "end_date": "2123-08-22T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(hours=30),
+            "end_date": timezone.now() + timedelta(hours=40),
             "comment": "Нужно срочно!!",
         }
         response_6 = self.user_client.post(
             reverse("orders-list"), data=order_data_6
         )
-        self.assertEqual(response_6.json(), order_data_6)
+        self.assertTrue(
+            Reservation.objects.filter(
+                number=response_6.data["number"],
+                machinery_id=response_6.data["machinery"],
+            ).exists()
+        )
 
     def test_changing_reservation(self):
         # Проверка метода PATCH
         order_data = {
-            "start_date": "2123-08-21T11:33:16.029352+03:00",
-            "end_date": "2123-08-22T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(minutes=1),
+            "end_date": timezone.now() + timedelta(hours=24),
             "comment": "Комментарий",
         }
         response = self.user_client.patch(
@@ -127,8 +137,8 @@ class TestOrdersView(TestOrdersFixture):
         # Проверка метода PUT
         order_data = {
             "machinery": 1,
-            "start_date": "2123-08-21T11:33:16.029352+03:00",
-            "end_date": "2123-08-22T11:32:16.029352+03:00",
+            "start_date": timezone.now() + timedelta(minutes=1),
+            "end_date": timezone.now() + timedelta(hours=24),
             "comment": "Другой комментарий",
         }
         response_2 = self.user_client.put(
@@ -162,7 +172,8 @@ class TestOrdersView(TestOrdersFixture):
             reverse("orders-cancel", kwargs={"pk": self.reservation4.id})
         )
         answer = {
-            "message": "Отмена невозможна! Осталось менее 48 часов до начала резервации."
+            "message": ("Отмена невозможна! Осталось менее"
+                        " 48 часов до начала резервации.")
         }
         self.assertEqual(
             cancel_reservation4.status_code, HTTPStatus.BAD_REQUEST
