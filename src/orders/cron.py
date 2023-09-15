@@ -31,14 +31,12 @@ class StatusChangingJob(CronJobBase):
         )
 
     def status_changing(
-            self,
-            order_status: ReservationStatusOptions,
-            new_status: ReservationStatusOptions,
-            field_name: str,
+        self,
+        order_status: ReservationStatusOptions,
+        new_status: ReservationStatusOptions,
+        field_name: str,
     ):
-        reservations_list = Reservation.objects.filter(
-            status=order_status
-        )
+        reservations_list = Reservation.objects.filter(status=order_status)
         if not len(reservations_list) == 0:
             for reserv in reservations_list:
                 if getattr(reserv, field_name) < timezone.now():
