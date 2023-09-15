@@ -21,4 +21,6 @@ jobs:
       - name: Test with black
         run: python -m black --diff --check .
       - name: Test with django tests
-        run: python src/manage.py test
+        run: |
+          cd src
+          python manage.py test
