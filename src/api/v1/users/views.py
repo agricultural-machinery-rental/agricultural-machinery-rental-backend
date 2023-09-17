@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import get_user_model
 from drf_spectacular.utils import (
     extend_schema,
@@ -14,6 +16,8 @@ from api.v1.users.permissions import OwnerOrAdminPermission, OwnerPermission
 from users.models import Callback
 
 User = get_user_model()
+
+logger = logging.getLogger(__name__)
 
 
 class NotListViewSet(
@@ -124,7 +128,13 @@ def set_password(request):
         user = request.user
         user.set_password(request.data["new_password"])
         user.save()
+        logger.info("Пароль успешно изменен")
         return Response(status=status.HTTP_204_NO_CONTENT)
+    logger.warning(
+        f"Пользователь: {request.user.email} ,"
+        f"Метод запроса: {request.method} ,"
+        f"Неверные данные для изменения пароля - {serializer.errors}"
+    )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -8,33 +8,37 @@ from orders.models import Reservation
 class StatusChangingJob(CronJobBase):
     """
     Задача по автоматическому изменению статусов заказов.
-    Присваивает заказам статусы 'В работе' и 'Завершен'.
     """
 
     schedule = Schedule(run_every_mins=50, retry_after_failure_mins=5)
     code = "orders.status_changing_job"
 
     def do(self):
-        created_reservations = Reservation.objects.filter(
-            status=ReservationStatusOptions.CREATED
+        self.status_changing(
+            order_status=ReservationStatusOptions.CREATED,
+            new_status=ReservationStatusOptions.CANCELLED,
+            field_name="start_date",
         )
-        for reservation in created_reservations:
-            if reservation.start_date < timezone.now():
-                reservation.status = ReservationStatusOptions.CANCELLED
-                reservation.save()
+        self.status_changing(
+            order_status=ReservationStatusOptions.CONFIRMED,
+            new_status=ReservationStatusOptions.AT_WORK,
+            field_name="start_date",
+        )
+        self.status_changing(
+            order_status=ReservationStatusOptions.AT_WORK,
+            new_status=ReservationStatusOptions.FINISHED,
+            field_name="end_date",
+        )
 
-        ongoing_reservations = Reservation.objects.filter(
-            status=ReservationStatusOptions.AT_WORK
-        )
-        for reservation in ongoing_reservations:
-            if reservation.end_date < timezone.now():
-                reservation.status = ReservationStatusOptions.FINISHED
-                reservation.save()
-
-        confirmed_reservations = Reservation.objects.filter(
-            status=ReservationStatusOptions.CONFIRMED
-        )
-        for reservation in confirmed_reservations:
-            if reservation.start_date < timezone.now():
-                reservation.status = ReservationStatusOptions.AT_WORK
-                reservation.save()
+    def status_changing(
+        self,
+        order_status: ReservationStatusOptions,
+        new_status: ReservationStatusOptions,
+        field_name: str,
+    ):
+        reservations_list = Reservation.objects.filter(status=order_status)
+        if not len(reservations_list) == 0:
+            for reserv in reservations_list:
+                if getattr(reserv, field_name) < timezone.now():
+                    reserv.status = new_status
+                    reserv.save()

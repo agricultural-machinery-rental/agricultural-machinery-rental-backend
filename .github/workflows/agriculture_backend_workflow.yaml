@@ -19,6 +19,6 @@ jobs:
           pip install black
           pip install -r requirements.txt
       - name: Test with black
-        run: |
-          python -m black --diff .
-          python -m black --check .
+        run: python -m black --diff --check .
+      - name: Test with django tests
+        run: python ./src/manage.py test ./src/

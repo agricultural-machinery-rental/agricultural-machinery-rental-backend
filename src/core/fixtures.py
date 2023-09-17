@@ -136,14 +136,14 @@ class TestOrdersFixture(TestMachinaryFixture, APITestCase):
         cls.reservation2 = Reservation.objects.create(
             machinery=cls.machinary_2,
             renter=cls.user,
-            start_date="2123-08-26T11:33:16.029352+03:00",
-            end_date="2123-08-27T11:32:16.029352+03:00",
+            start_date=timezone.now() + timedelta(hours=100),
+            end_date=timezone.now() + timedelta(hours=200),
         )
         cls.reservation3 = Reservation.objects.create(
             machinery=cls.machinary_2,
             renter=cls.user,
-            start_date="2123-08-18T11:33:16.029352+03:00",
-            end_date="2123-08-18T12:32:16.029352+03:00",
+            start_date=timezone.now() + timedelta(hours=300),
+            end_date=timezone.now() + timedelta(hours=400),
         )
         cls.reservation4 = Reservation.objects.create(
             machinery=cls.machinary_1,
