@@ -24,3 +24,8 @@ class TestOrders(TestOrdersFixture):
 
         expected_number = f"{PREFIX_ORDER_NUMBER}{year}000005"
         self.assertEqual(reservation.number, expected_number)
+        cost = (
+            2 * self.machinary_2.price_per_shift
+            + 4 * self.machinary_2.price_per_hour
+        )
+        self.assertEqual(reservation.cost, cost)
