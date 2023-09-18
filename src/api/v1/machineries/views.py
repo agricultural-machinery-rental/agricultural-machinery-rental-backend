@@ -123,6 +123,7 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         paginator = DefaultPagination()
         queryset = Machinery.objects.order_by("-count_orders")
         result_page = paginator.paginate_queryset(queryset, request)
+        logger.info("Запрос на получение популярных объектов")
         if result_page is None:
             serializer = MachinerySerializer(
                 queryset, many=True, context={"request": request}
@@ -131,7 +132,6 @@ class MachineryViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = MachinerySerializer(
             result_page, many=True, context={"request": request}
         )
-        logger.info("Запрос на получение популярных объектов")
         return paginator.get_paginated_response(serializer.data)
 
 
