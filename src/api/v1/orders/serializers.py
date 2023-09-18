@@ -83,4 +83,5 @@ class ReadReservationSerializer(serializers.ModelSerializer):
             "end_date",
             "status",
             "comment",
+            "cost",
         )

@@ -1,3 +1,5 @@
+import math
+
 from django.contrib.auth import settings
 from django.db import models
 from django.utils import timezone
@@ -63,6 +65,9 @@ class Reservation(models.Model):
         blank=True,
         null=True,
     )
+    cost = models.DecimalField(
+        verbose_name="Стоимость аренды", max_digits=9, decimal_places=2
+    )
 
     objects = ReservationManagger()
 
@@ -101,7 +106,30 @@ class Reservation(models.Model):
             prefix=prefix, year=year, number=zeros + str(number)
         )
 
+    def _cost_calculation(self):
+        """
+        Расчет стоимости аренды.
+        Расчитывается продолжительность аренды в часах
+        (часы округляются в большую сторону).
+        Количество полных смен умножается на цену за смену,
+        оставшееся количество часов - на цену за час.
+        """
+
+        price_per_shift = self.machinery.price_per_shift
+        price_per_hour = self.machinery.price_per_hour
+        duration = self.end_date - self.start_date
+        duration_in_hours = duration.days * 24 + math.ceil(
+            duration.seconds / 3600
+        )
+        cost = (
+            duration_in_hours // 8 * price_per_shift
+            + duration_in_hours % 8 * price_per_hour
+        )
+        return cost
+
     def save(self, *args, **kwargs):
         if not self.number:
             self.number = self._generation_number()
+        if not self.cost:
+            self.cost = self._cost_calculation()
         super(Reservation, self).save(*args, **kwargs)
